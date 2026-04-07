@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import LayoutClient from './layout-client';
 
 export default function AuthRedirect({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -28,5 +29,11 @@ export default function AuthRedirect({ children }: { children: React.ReactNode }
     return null; // No renderizar nada mientras se verifica
   }
 
-  return <>{children}</>;
+  // Si está en login, no mostrar sidebar
+  if (pathname === '/login') {
+    return <>{children}</>;
+  }
+
+  // Si está en dashboard, mostrar con sidebar
+  return <LayoutClient>{children}</LayoutClient>;
 }
