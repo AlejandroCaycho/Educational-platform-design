@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const attendanceData = [
   { date: 'Lun', presente: 92, ausente: 8 },
@@ -51,14 +53,23 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
 }
 
 export default function Home() {
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Solo mostrar el toast si es la primera vez que entra a esta sesión
+    const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
+    
+    if (!hasShownWelcome) {
+      toast({
+        title: 'Bienvenido de vuelta',
+        description: 'Aquí está tu resumen de actividad de esta semana.',
+      });
+      sessionStorage.setItem('hasShownWelcome', 'true');
+    }
+  }, [toast]);
+
   return (
     <div className="p-6 md:p-8 space-y-8">
-      {/* Header Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Bienvenido de vuelta</h1>
-        <p className="text-muted-foreground">Aquí está tu resumen de actividad de esta semana</p>
-      </div>
-
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />

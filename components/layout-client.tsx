@@ -7,6 +7,7 @@ import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
   GraduationCap, Bell
 } from 'lucide-react';
+import { Toaster } from './ui/toaster';
 
 function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolean) => void }) {
   const pathname = usePathname();
@@ -42,7 +43,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}>
         {/* Header del Sidebar */}
-        <div className={`flex items-center px-3 py-3 border-b border-border flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
+        <div className={`flex flex-col lg:flex-row lg:items-center px-3 py-3 border-b border-border flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
           <div className={`flex items-center gap-2 flex-1 min-w-0 ${isCollapsed ? 'lg:hidden' : ''}`}>
             <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
               E
@@ -53,13 +54,13 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
             </div>
           </div>
           
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors relative" title="Notificaciones">
+          <div className={`flex gap-2 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'}`}>
+            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors relative flex items-center justify-center" title="Notificaciones">
               <Bell className="w-4 h-4 text-foreground" />
               <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full"></span>
             </button>
             <button
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground"
+              className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground flex items-center justify-center"
               onClick={handleToggle}
               title={isCollapsed ? 'Expandir' : 'Colapsar'}
             >
@@ -122,6 +123,7 @@ export default function LayoutClient({
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
+      <Toaster />
     </div>
   );
 }
