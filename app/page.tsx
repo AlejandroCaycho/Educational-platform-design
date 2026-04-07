@@ -56,10 +56,16 @@ export default function Home() {
   const { toast } = useToast();
 
   useEffect(() => {
-    toast({
-      title: 'Bienvenido de vuelta',
-      description: 'Aquí está tu resumen de actividad de esta semana.',
-    });
+    // Solo mostrar el toast si es la primera vez que entra a esta sesión
+    const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
+    
+    if (!hasShownWelcome) {
+      toast({
+        title: 'Bienvenido de vuelta',
+        description: 'Aquí está tu resumen de actividad de esta semana.',
+      });
+      sessionStorage.setItem('hasShownWelcome', 'true');
+    }
   }, [toast]);
 
   return (
