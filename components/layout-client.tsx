@@ -7,6 +7,7 @@ import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
   GraduationCap, Bell
 } from 'lucide-react';
+import { Toaster } from './ui/toaster';
 
 function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolean) => void }) {
   const pathname = usePathname();
@@ -122,6 +123,7 @@ export default function LayoutClient({
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
+      <Toaster />
     </div>
   );
 }

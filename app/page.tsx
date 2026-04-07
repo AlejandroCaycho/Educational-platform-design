@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const attendanceData = [
   { date: 'Lun', presente: 92, ausente: 8 },
@@ -51,6 +53,15 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
 }
 
 export default function Home() {
+  const { toast } = useToast();
+
+  useEffect(() => {
+    toast({
+      title: 'Bienvenido de vuelta',
+      description: 'Aquí está tu resumen de actividad de esta semana.',
+    });
+  }, [toast]);
+
   return (
     <div className="p-6 md:p-8 space-y-8">
       {/* Header Section */}
