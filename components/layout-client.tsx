@@ -53,13 +53,13 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
             </div>
           </div>
           
-          <div className="flex flex-col lg:flex-row lg:items-center gap-2 flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
-            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors relative w-full lg:w-auto justify-center lg:justify-start flex items-center" title="Notificaciones">
+          <div className="flex flex-col gap-2 flex-shrink-0 w-full">
+            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors relative flex items-center justify-center" title="Notificaciones">
               <Bell className="w-4 h-4 text-foreground" />
-              <span className="absolute top-0.5 right-0.5 lg:right-auto lg:top-0.5 w-2 h-2 bg-destructive rounded-full"></span>
+              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full"></span>
             </button>
             <button
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground w-full lg:w-auto justify-center lg:justify-start flex items-center"
+              className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground flex items-center justify-center"
               onClick={handleToggle}
               title={isCollapsed ? 'Expandir' : 'Colapsar'}
             >
