@@ -70,12 +70,6 @@ export default function Home() {
 
   return (
     <div className="p-6 md:p-8 space-y-8">
-      {/* Header Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Bienvenido de vuelta</h1>
-        <p className="text-muted-foreground">Aquí está tu resumen de actividad de esta semana</p>
-      </div>
-
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
