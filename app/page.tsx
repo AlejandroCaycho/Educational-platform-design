@@ -60,8 +60,12 @@ export default function Home() {
     const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
     
     if (!hasShownWelcome) {
+      // Obtener el email del usuario y extraer el nombre
+      const userEmail = sessionStorage.getItem('userEmail') || 'Usuario';
+      const userName = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
+      
       toast({
-        title: 'Bienvenido de vuelta',
+        title: `Bienvenido al sistema, ${userName}`,
         description: 'Aquí está tu resumen de actividad de esta semana.',
       });
       sessionStorage.setItem('hasShownWelcome', 'true');
