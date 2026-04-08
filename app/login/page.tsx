@@ -34,22 +34,22 @@ export default function LoginPage() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
-        filter: 'brightness(1.2) contrast(1.05)'
+        filter: 'brightness(0.95) contrast(1.05)'
       }}
     >
-      {/* Overlay translúcido para mejorar legibilidad sin oscurecer demasiado */}
-      <div className="absolute inset-0 bg-white/20"></div>
+      {/* Overlay translúcido para mejorar legibilidad */}
+      <div className="absolute inset-0 bg-white/40"></div>
       
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+          <div className="w-16 h-16 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-lg">
             <GraduationCap className="w-8 h-8" />
           </div>
         </div>
 
         {/* Contenedor del formulario */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 border-2 border-gray-300">
+        <div className="bg-white rounded-lg shadow-2xl p-8 border-4 border-gray-700">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 text-center">EduNova</h1>
             <p className="text-sm text-gray-600 text-center mt-2">
