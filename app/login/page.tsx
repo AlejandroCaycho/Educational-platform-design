@@ -49,7 +49,7 @@ export default function LoginPage() {
         </div>
 
         {/* Contenedor del formulario */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 border border-white/30">
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 border-2 border-gray-300">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 text-center">EduNova</h1>
             <p className="text-sm text-gray-600 text-center mt-2">
