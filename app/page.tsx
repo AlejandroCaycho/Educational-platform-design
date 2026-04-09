@@ -66,19 +66,23 @@ export default function Home() {
       const name = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
       setUserName(name);
       setShowWelcome(true);
-      
-      // Auto-desaparecer después de 1 segundo
-      const timer = setTimeout(() => {
-        setIsHiding(true);
-        setTimeout(() => {
-          setShowWelcome(false);
-          setIsHiding(false);
-        }, 300); // Duración de la animación de salida
-      }, 1000);
-      
       sessionStorage.setItem('hasShownWelcome', 'true');
       
-      return () => clearTimeout(timer);
+      // Auto-desaparecer después de 1 segundo
+      const hideTimer = setTimeout(() => {
+        setIsHiding(true);
+      }, 1000);
+      
+      // Completar la desaparición después de la animación
+      const removeTimer = setTimeout(() => {
+        setShowWelcome(false);
+        setIsHiding(false);
+      }, 1300); // 1000 + 300ms de animación
+      
+      return () => {
+        clearTimeout(hideTimer);
+        clearTimeout(removeTimer);
+      };
     }
   }, []);
 
