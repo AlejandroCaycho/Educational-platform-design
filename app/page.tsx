@@ -82,7 +82,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="p-6 md:p-8 space-y-8">
+    <div className="p-6 md:p-7 space-y-7">
       {/* Welcome Notification */}
       {showWelcome && (
         <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
@@ -120,7 +120,7 @@ export default function Home() {
         {/* Attendance Chart */}
         <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={285}>
             <BarChart data={attendanceData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="date" stroke="#6b7280" />
@@ -136,7 +136,7 @@ export default function Home() {
         {/* Incidents Pie Chart */}
         <div className="bg-card rounded-lg border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={285}>
             <PieChart>
               <Pie data={incidentsData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
                 {incidentsData.map((entry, index) => (
