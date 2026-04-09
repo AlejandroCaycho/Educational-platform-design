@@ -67,14 +67,14 @@ export default function Home() {
       setUserName(name);
       setShowWelcome(true);
       
-      // Auto-desaparecer después de 2 segundos
+      // Auto-desaparecer después de 1 segundo
       const timer = setTimeout(() => {
         setIsHiding(true);
         setTimeout(() => {
           setShowWelcome(false);
           setIsHiding(false);
         }, 300); // Duración de la animación de salida
-      }, 2000);
+      }, 1000);
       
       sessionStorage.setItem('hasShownWelcome', 'true');
       
