@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle, X } from 'lucide-react';
 
 const attendanceData = [
   { date: 'Lun', presente: 92, ausente: 8 },
@@ -53,27 +52,51 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
 }
 
 export default function Home() {
-  const { toast } = useToast();
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    // Solo mostrar el toast si es la primera vez que entra a esta sesión
+    // Solo mostrar la notificación si es la primera vez que entra a esta sesión
     const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
     
     if (!hasShownWelcome) {
       // Obtener el email del usuario y extraer el nombre
       const userEmail = sessionStorage.getItem('userEmail') || 'Usuario';
-      const userName = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
+      const name = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
+      setUserName(name);
+      setShowWelcome(true);
       
-      toast({
-        title: `Bienvenido al sistema, ${userName}`,
-        description: 'Aquí está tu resumen de actividad de esta semana.',
-      });
+      // Auto-desaparecer después de 4 segundos
+      const timer = setTimeout(() => {
+        setShowWelcome(false);
+      }, 4000);
+      
       sessionStorage.setItem('hasShownWelcome', 'true');
+      
+      return () => clearTimeout(timer);
     }
-  }, [toast]);
+  }, []);
 
   return (
     <div className="p-6 md:p-8 space-y-8">
+      {/* Welcome Notification */}
+      {showWelcome && (
+        <div className="animate-in fade-in slide-in-from-top-4 duration-300 mb-6">
+          <div className="bg-gradient-to-r from-primary/90 to-primary/80 rounded-lg p-4 text-white flex items-center justify-between shadow-md">
+            <div>
+              <h2 className="font-semibold text-lg">Bienvenido al sistema, {userName}</h2>
+              <p className="text-sm text-white/90">Aquí está tu resumen de actividad de esta semana.</p>
+            </div>
+            <button
+              onClick={() => setShowWelcome(false)}
+              className="ml-4 p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
