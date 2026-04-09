@@ -53,6 +53,7 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
 
 export default function Home() {
   const [showWelcome, setShowWelcome] = useState(false);
+  const [isHiding, setIsHiding] = useState(false);
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -66,10 +67,14 @@ export default function Home() {
       setUserName(name);
       setShowWelcome(true);
       
-      // Auto-desaparecer después de 4 segundos
+      // Auto-desaparecer después de 2 segundos
       const timer = setTimeout(() => {
-        setShowWelcome(false);
-      }, 4000);
+        setIsHiding(true);
+        setTimeout(() => {
+          setShowWelcome(false);
+          setIsHiding(false);
+        }, 300); // Duración de la animación de salida
+      }, 2000);
       
       sessionStorage.setItem('hasShownWelcome', 'true');
       
@@ -81,14 +86,20 @@ export default function Home() {
     <div className="p-6 md:p-8 space-y-8">
       {/* Welcome Notification */}
       {showWelcome && (
-        <div className="animate-in fade-in slide-in-from-top-4 duration-300 mb-6">
-          <div className="bg-gradient-to-r from-primary/90 to-primary/80 rounded-lg p-4 text-white flex items-center justify-between shadow-md">
+        <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
+          <div className="bg-gradient-to-r from-primary to-primary/80 rounded-lg p-4 text-white flex items-center justify-between shadow-lg">
             <div>
-              <h2 className="font-semibold text-lg">Bienvenido al sistema, {userName}</h2>
+              <h2 className="font-semibold text-lg">¡Bienvenido, {userName}!</h2>
               <p className="text-sm text-white/90">Aquí está tu resumen de actividad de esta semana.</p>
             </div>
             <button
-              onClick={() => setShowWelcome(false)}
+              onClick={() => {
+                setIsHiding(true);
+                setTimeout(() => {
+                  setShowWelcome(false);
+                  setIsHiding(false);
+                }, 300);
+              }}
               className="ml-4 p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
             >
               <X className="w-5 h-5" />
@@ -98,7 +109,7 @@ export default function Home() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300`}>
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
         <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
         <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
