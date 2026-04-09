@@ -69,20 +69,15 @@ export default function Home() {
       sessionStorage.setItem('hasShownWelcome', 'true');
       
       // Auto-desaparecer después de 1 segundo
-      const hideTimer = setTimeout(() => {
+      setTimeout(() => {
         setIsHiding(true);
       }, 1000);
       
       // Completar la desaparición después de la animación
-      const removeTimer = setTimeout(() => {
+      setTimeout(() => {
         setShowWelcome(false);
         setIsHiding(false);
       }, 1300); // 1000 + 300ms de animación
-      
-      return () => {
-        clearTimeout(hideTimer);
-        clearTimeout(removeTimer);
-      };
     }
   }, []);
 
