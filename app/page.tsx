@@ -108,11 +108,13 @@ export default function Home() {
       )}
 
       {/* Stats Grid */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 transition-all duration-300`}>
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
         <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
         <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
         <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
+        <StatCard icon={FileText} label="Tareas Completadas" value="623" color="purple" />
+        <StatCard icon={MessageSquare} label="Comunicaciones" value="48" color="cyan" />
       </div>
 
       {/* Charts Section */}
