@@ -108,90 +108,110 @@ export default function Home() {
       )}
 
       {/* Stats Grid */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 transition-all duration-300`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300`}>
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
         <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
         <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
         <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
-        <StatCard icon={FileText} label="Tareas Completadas" value="623" color="purple" />
-        <StatCard icon={MessageSquare} label="Comunicaciones" value="48" color="cyan" />
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Charts Section - 3x3 Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Attendance Chart */}
-        <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
-          <ResponsiveContainer width="100%" height={270}>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={attendanceData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }} />
-              <Legend />
-              <Bar dataKey="presente" fill="#5048ff" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="ausente" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="presente" fill="#5048ff" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="ausente" fill="#fca5a5" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Performance Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={performanceData} layout="vertical">
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
+              <XAxis type="number" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis dataKey="name" type="category" stroke="#9ca3af" style={{fontSize: '11px'}} width={80} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="value" fill="#10b981" radius={[0, 8, 8, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Incidents Pie Chart */}
-        <div className="bg-card rounded-lg border border-border p-6">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
-          <ResponsiveContainer width="100%" height={270}>
+          <ResponsiveContainer width="100%" height={220}>
             <PieChart>
-              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
+              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={false} outerRadius={70} fill="#8884d8" dataKey="value">
                 {incidentsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
 
-      {/* Performance and Messages */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Performance by Subject */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
-          <div className="space-y-3">
-            {performanceData.map((subject) => (
-              <div key={subject.name}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-foreground">{subject.name}</span>
-                  <span className="text-sm font-bold text-primary">{subject.value}</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary rounded-full h-2"
-                    style={{ width: `${(subject.value / 10) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+        {/* Tareas Completadas */}
+        <div className="bg-gradient-to-br from-blue-50 to-blue-50/50 rounded-2xl border border-blue-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-blue-600" />
+            Tareas
+          </h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Completadas</span>
+              <span className="text-2xl font-bold text-blue-600">623</span>
+            </div>
+            <div className="w-full bg-blue-100 rounded-full h-3">
+              <div className="bg-blue-600 rounded-full h-3" style={{ width: '85%' }} />
+            </div>
+            <p className="text-xs text-blue-600 font-medium">85% del objetivo</p>
           </div>
         </div>
 
-        {/* Recent Messages */}
-        <div className="bg-card rounded-lg border border-border p-6">
+        {/* Comunicaciones */}
+        <div className="bg-gradient-to-br from-cyan-50 to-cyan-50/50 rounded-2xl border border-cyan-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Mensajes Recientes
+            <MessageSquare className="w-5 h-5 text-cyan-600" />
+            Comunicaciones
           </h3>
-          <div className="space-y-3">
-            {[
-              { from: 'Profa. García', message: 'Buen trabajo en la última prueba', time: 'Hoy 2:30 PM' },
-              { from: 'Dirección', message: 'Recordatorio de jornada de padres', time: 'Ayer 10:00 AM' },
-              { from: 'Profa. Morales', message: 'Tareas extras disponibles', time: '2 días atrás' },
-            ].map((msg, i) => (
-              <div key={i} className="p-3 border border-border rounded-lg hover:bg-muted transition-colors">
-                <p className="font-medium text-foreground text-sm">{msg.from}</p>
-                <p className="text-sm text-muted-foreground">{msg.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{msg.time}</p>
-              </div>
-            ))}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Activas</span>
+              <span className="text-2xl font-bold text-cyan-600">48</span>
+            </div>
+            <div className="flex gap-2">
+              <div className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">+12 nuevas</div>
+              <div className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">3 pendientes</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Asistencia Puntaje */}
+        <div className="bg-gradient-to-br from-green-50 to-green-50/50 rounded-2xl border border-green-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            Asistencia
+          </h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Promedio</span>
+              <span className="text-2xl font-bold text-green-600">92%</span>
+            </div>
+            <div className="w-full bg-green-100 rounded-full h-3">
+              <div className="bg-green-600 rounded-full h-3" style={{ width: '92%' }} />
+            </div>
+            <p className="text-xs text-green-600 font-medium">Muy buena</p>
           </div>
         </div>
       </div>
