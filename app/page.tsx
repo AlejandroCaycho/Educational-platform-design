@@ -115,10 +115,10 @@ export default function Home() {
         <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
       </div>
 
-      {/* Charts Section - Modern Graphs */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Charts Section - Modern Graphs - 2 Arriba */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Attendance Chart */}
-        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={attendanceData}>
@@ -132,8 +132,26 @@ export default function Home() {
           </ResponsiveContainer>
         </div>
 
+        {/* Performance Trend Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Tendencia de Desempeño</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={attendanceData}>
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Line type="monotone" dataKey="presente" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
+              <Line type="monotone" dataKey="ausente" stroke="#f59e0b" strokeWidth={3} dot={{ fill: '#f59e0b', r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Charts Section - 3 Abajo */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Chart */}
-        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={performanceData} layout="vertical">
@@ -147,7 +165,7 @@ export default function Home() {
         </div>
 
         {/* Incidents Pie Chart */}
-        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
@@ -158,6 +176,26 @@ export default function Home() {
               </Pie>
               <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
             </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Calificaciones Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Distribución de Calificaciones</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={[
+              { name: 'A', value: 45 },
+              { name: 'B', value: 85 },
+              { name: 'C', value: 65 },
+              { name: 'D', value: 30 },
+              { name: 'F', value: 10 }
+            ]}>
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="name" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="value" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
