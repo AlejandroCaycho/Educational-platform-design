@@ -8,25 +8,30 @@ export default function AuthRedirect({ children }: { children: React.ReactNode }
   const router = useRouter();
   const pathname = usePathname();
   const [isChecked, setIsChecked] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    const loggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
 
     // Si está en login y está autenticado, ir a dashboard
-    if (pathname === '/login' && isLoggedIn) {
+    if (pathname === '/login' && loggedIn) {
       router.push('/');
+      return;
     }
 
     // Si está en dashboard y NO está autenticado, ir a login
-    if (pathname === '/' && !isLoggedIn) {
+    if (pathname === '/' && !loggedIn) {
       router.push('/login');
+      return;
     }
 
     setIsChecked(true);
   }, [pathname, router]);
 
+  // Mientras se verifica, no renderizar nada
   if (!isChecked) {
-    return null; // No renderizar nada mientras se verifica
+    return null;
   }
 
   // Si está en login, no mostrar sidebar
@@ -34,6 +39,10 @@ export default function AuthRedirect({ children }: { children: React.ReactNode }
     return <>{children}</>;
   }
 
-  // Si está en dashboard, mostrar con sidebar
-  return <LayoutClient>{children}</LayoutClient>;
+  // Si está en dashboard, mostrar con sidebar (solo si está autenticado)
+  if (isLoggedIn) {
+    return <LayoutClient>{children}</LayoutClient>;
+  }
+
+  return null; // No renderizar nada si no está autenticado
 }

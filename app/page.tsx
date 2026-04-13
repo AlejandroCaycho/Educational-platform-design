@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle, X } from 'lucide-react';
 
 const attendanceData = [
   { date: 'Lun', presente: 92, ausente: 8 },
@@ -53,107 +52,166 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
 }
 
 export default function Home() {
-  const { toast } = useToast();
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [isHiding, setIsHiding] = useState(false);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    // Solo mostrar el toast si es la primera vez que entra a esta sesión
+    // Solo mostrar la notificación si es la primera vez que entra a esta sesión
     const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
     
     if (!hasShownWelcome) {
-      toast({
-        title: 'Bienvenido de vuelta',
-        description: 'Aquí está tu resumen de actividad de esta semana.',
-      });
+      // Obtener el email del usuario y extraer el nombre
+      const userEmail = sessionStorage.getItem('userEmail') || 'Usuario';
+      const name = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
+      setUserName(name);
+      setShowWelcome(true);
       sessionStorage.setItem('hasShownWelcome', 'true');
+      
+      // Auto-desaparecer después de 3 segundos
+      setTimeout(() => {
+        setIsHiding(true);
+      }, 3000);
+      
+      // Completar la desaparición después de la animación
+      setTimeout(() => {
+        setShowWelcome(false);
+        setIsHiding(false);
+      }, 3300); // 3000 + 300ms de animación
     }
-  }, [toast]);
+  }, []);
 
   return (
-    <div className="p-6 md:p-8 space-y-8">
+    <div className="p-5 md:p-6 space-y-6">
+      {/* Welcome Notification */}
+      {showWelcome && (
+        <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
+          <div className="bg-gradient-to-r from-primary to-primary/80 rounded-lg p-4 text-white flex items-center justify-between shadow-lg">
+            <div>
+              <h2 className="font-semibold text-lg">¡Bienvenido, {userName}!</h2>
+              <p className="text-sm text-white/90">Aquí está tu resumen de actividad de esta semana.</p>
+            </div>
+            <button
+              onClick={() => {
+                setIsHiding(true);
+                setTimeout(() => {
+                  setShowWelcome(false);
+                  setIsHiding(false);
+                }, 300);
+              }}
+              className="ml-4 p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300`}>
         <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
         <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
         <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
         <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Charts Section - Modern Graphs - 2 Arriba */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Attendance Chart */}
-        <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Asistencia Semanal</h3>
+            <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Gráfico de barras</div>
+          </div>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
             <BarChart data={attendanceData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }} />
-              <Legend />
-              <Bar dataKey="presente" fill="#5048ff" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="ausente" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="presente" fill="#5048ff" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="ausente" fill="#fca5a5" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Performance Trend Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Tendencia de Desempeño</h3>
+            <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Gráfico de línea</div>
+          </div>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+            <LineChart data={attendanceData}>
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Line type="monotone" dataKey="presente" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
+              <Line type="monotone" dataKey="ausente" stroke="#f59e0b" strokeWidth={3} dot={{ fill: '#f59e0b', r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Charts Section - 3 Abajo */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Performance Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Desempeño por Materia</h3>
+            <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Horizontal</div>
+          </div>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+            <BarChart data={performanceData} layout="vertical">
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
+              <XAxis type="number" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis dataKey="name" type="category" stroke="#9ca3af" style={{fontSize: '11px'}} width={80} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="value" fill="#10b981" radius={[0, 8, 8, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Incidents Pie Chart */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Tipos de Incidencias</h3>
+            <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Gráfico circular</div>
+          </div>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
             <PieChart>
-              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
+              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={true} outerRadius={70} fill="#8884d8" dataKey="value" label={({ name }) => name}>
                 {incidentsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
 
-      {/* Performance and Messages */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Performance by Subject */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
-          <div className="space-y-3">
-            {performanceData.map((subject) => (
-              <div key={subject.name}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-foreground">{subject.name}</span>
-                  <span className="text-sm font-bold text-primary">{subject.value}</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary rounded-full h-2"
-                    style={{ width: `${(subject.value / 10) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+        {/* Calificaciones Chart */}
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Distribución de Calificaciones (0-20)</h3>
+            <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">Gráfico de barras</div>
           </div>
-        </div>
-
-        {/* Recent Messages */}
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Mensajes Recientes
-          </h3>
-          <div className="space-y-3">
-            {[
-              { from: 'Profa. García', message: 'Buen trabajo en la última prueba', time: 'Hoy 2:30 PM' },
-              { from: 'Dirección', message: 'Recordatorio de jornada de padres', time: 'Ayer 10:00 AM' },
-              { from: 'Profa. Morales', message: 'Tareas extras disponibles', time: '2 días atrás' },
-            ].map((msg, i) => (
-              <div key={i} className="p-3 border border-border rounded-lg hover:bg-muted transition-colors">
-                <p className="font-medium text-foreground text-sm">{msg.from}</p>
-                <p className="text-sm text-muted-foreground">{msg.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{msg.time}</p>
-              </div>
-            ))}
-          </div>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+            <BarChart data={[
+              { name: '16-20', value: 45 },
+              { name: '14-15', value: 85 },
+              { name: '12-13', value: 65 },
+              { name: '10-11', value: 30 },
+              { name: '0-9', value: 10 }
+            ]}>
+              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="name" stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
+              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
+              <Bar dataKey="value" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

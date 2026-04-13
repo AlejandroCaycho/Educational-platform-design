@@ -27,27 +27,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-background to-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        backgroundImage: 'url(/images/education-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        filter: 'brightness(0.95) contrast(1.05)'
+      }}
+    >
+      {/* Overlay translúcido para mejorar legibilidad */}
+      <div className="absolute inset-0 bg-white/40"></div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
+          <div className="w-16 h-16 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-lg">
             <GraduationCap className="w-8 h-8" />
           </div>
         </div>
 
         {/* Contenedor del formulario */}
-        <div className="bg-card rounded-lg shadow-lg p-8 border border-border">
+        <div className="bg-white rounded-lg shadow-2xl p-8 border border-gray-400">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-foreground text-center">EduNova</h1>
-            <p className="text-sm text-muted-foreground text-center mt-2">
+            <h1 className="text-2xl font-bold text-gray-900 text-center">EduNova</h1>
+            <p className="text-sm text-gray-600 text-center mt-2">
               Plataforma de Educación
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                 Correo electrónico
               </label>
               <input
@@ -57,12 +69,12 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded-lg bg-background border border-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
                 Contraseña
               </label>
               <input
@@ -72,7 +84,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded-lg bg-background border border-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -85,7 +97,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-xs text-muted-foreground text-center mt-6">
+          <p className="text-xs text-gray-600 text-center mt-6">
             Ingresa cualquier correo y contraseña para acceder
           </p>
         </div>
