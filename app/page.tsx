@@ -119,7 +119,10 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Attendance Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Asistencia Semanal</h3>
+            <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Gráfico de barras</div>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={attendanceData}>
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
@@ -134,7 +137,10 @@ export default function Home() {
 
         {/* Performance Trend Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Tendencia de Desempeño</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Tendencia de Desempeño</h3>
+            <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Gráfico de línea</div>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={attendanceData}>
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
@@ -152,7 +158,10 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Desempeño por Materia</h3>
+            <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Horizontal</div>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={performanceData} layout="vertical">
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
@@ -166,10 +175,13 @@ export default function Home() {
 
         {/* Incidents Pie Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Tipos de Incidencias</h3>
+            <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Gráfico circular</div>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
-              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={false} outerRadius={70} fill="#8884d8" dataKey="value">
+              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={true} outerRadius={70} fill="#8884d8" dataKey="value" label={({ name }) => name}>
                 {incidentsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -181,7 +193,10 @@ export default function Home() {
 
         {/* Calificaciones Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Distribución de Calificaciones (0-20)</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Distribución de Calificaciones (0-20)</h3>
+            <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">Gráfico de barras</div>
+          </div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={[
               { name: '16-20', value: 45 },
