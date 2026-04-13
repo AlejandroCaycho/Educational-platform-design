@@ -124,7 +124,6 @@ export default function Home() {
             <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Gráfico de barras</div>
           </div>
           <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
-            <BarChart data={attendanceData} style={{transition: 'height 0.3s ease-in-out'}}>
             <BarChart data={attendanceData}>
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
               <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
