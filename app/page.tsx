@@ -181,14 +181,14 @@ export default function Home() {
 
         {/* Calificaciones Chart */}
         <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Distribución de Calificaciones</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Distribución de Calificaciones (0-20)</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={[
-              { name: 'A', value: 45 },
-              { name: 'B', value: 85 },
-              { name: 'C', value: 65 },
-              { name: 'D', value: 30 },
-              { name: 'F', value: 10 }
+              { name: '16-20', value: 45 },
+              { name: '14-15', value: 85 },
+              { name: '12-13', value: 65 },
+              { name: '10-11', value: 30 },
+              { name: '0-9', value: 10 }
             ]}>
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
               <XAxis dataKey="name" stroke="#9ca3af" style={{fontSize: '12px'}} />
