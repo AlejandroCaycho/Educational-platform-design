@@ -115,10 +115,10 @@ export default function Home() {
         <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
       </div>
 
-      {/* Charts Section - 3x3 Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Charts Section - Modern Graphs */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendance Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Asistencia Semanal</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={attendanceData}>
@@ -133,7 +133,7 @@ export default function Home() {
         </div>
 
         {/* Performance Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Desempeño por Materia</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={performanceData} layout="vertical">
@@ -147,7 +147,7 @@ export default function Home() {
         </div>
 
         {/* Incidents Pie Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="lg:col-span-1 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-lg font-semibold text-foreground mb-4">Tipos de Incidencias</h3>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
@@ -159,60 +159,6 @@ export default function Home() {
               <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-
-        {/* Tareas Completadas */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-50/50 rounded-2xl border border-blue-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
-            Tareas
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Completadas</span>
-              <span className="text-2xl font-bold text-blue-600">623</span>
-            </div>
-            <div className="w-full bg-blue-100 rounded-full h-3">
-              <div className="bg-blue-600 rounded-full h-3" style={{ width: '85%' }} />
-            </div>
-            <p className="text-xs text-blue-600 font-medium">85% del objetivo</p>
-          </div>
-        </div>
-
-        {/* Comunicaciones */}
-        <div className="bg-gradient-to-br from-cyan-50 to-cyan-50/50 rounded-2xl border border-cyan-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-cyan-600" />
-            Comunicaciones
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Activas</span>
-              <span className="text-2xl font-bold text-cyan-600">48</span>
-            </div>
-            <div className="flex gap-2">
-              <div className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">+12 nuevas</div>
-              <div className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">3 pendientes</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Asistencia Puntaje */}
-        <div className="bg-gradient-to-br from-green-50 to-green-50/50 rounded-2xl border border-green-200/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            Asistencia
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Promedio</span>
-              <span className="text-2xl font-bold text-green-600">92%</span>
-            </div>
-            <div className="w-full bg-green-100 rounded-full h-3">
-              <div className="bg-green-600 rounded-full h-3" style={{ width: '92%' }} />
-            </div>
-            <p className="text-xs text-green-600 font-medium">Muy buena</p>
-          </div>
         </div>
       </div>
     </div>
