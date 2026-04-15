@@ -171,66 +171,63 @@ export default function Mensajes() {
             </div>
 
             {/* Chat Messages - Conversation Thread */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-background flex flex-col">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-background flex flex-col">
               {/* Separador de fecha */}
-              <div className="flex items-center gap-3 my-2">
-                <div className="flex-1 h-px bg-border"></div>
-                <p className="text-xs text-muted-foreground font-medium">Hoy</p>
-                <div className="flex-1 h-px bg-border"></div>
+              <div className="flex items-center justify-center gap-3 my-1">
+                <div className="flex-1 h-px bg-border/50"></div>
+                <p className="text-xs text-muted-foreground/70 font-medium whitespace-nowrap">Hoy</p>
+                <div className="flex-1 h-px bg-border/50"></div>
               </div>
 
               {/* Mensaje inicial del profesor */}
-              <div className="flex gap-3 justify-start">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+              <div className="flex gap-3 justify-start items-end">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
                   <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
                 </div>
-                <div className="flex flex-col gap-0.5 max-w-sm">
-                  <p className="text-xs font-semibold text-muted-foreground px-3">{selectedMessage.from}</p>
-                  <div className="bg-muted/80 hover:bg-muted transition-colors rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm">
-                    <p className="text-foreground text-sm leading-1.5">{selectedMessage.message}</p>
+                <div className="flex flex-col gap-1">
+                  <div className="bg-muted rounded-3xl rounded-bl-sm px-5 py-3 shadow-sm">
+                    <p className="text-foreground text-sm break-words">{selectedMessage.message}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-3">{selectedMessage.time}</p>
+                  <span className="text-xs text-muted-foreground/70 px-3">{selectedMessage.time}</span>
                 </div>
               </div>
 
               {/* Indicador de escritura */}
               <div className="flex gap-3 justify-start items-end">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
                   <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
                 </div>
-                <div className="flex gap-1.5 px-4 py-3 bg-muted/60 rounded-2xl rounded-tl-sm shadow-sm">
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce"></div>
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <div className="flex items-center gap-2 px-4 py-3 bg-muted rounded-3xl rounded-bl-sm shadow-sm">
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
 
               {/* Mensaje de respuesta simulado */}
-              <div className="flex gap-3 justify-end">
-                <div className="flex flex-col gap-0.5 max-w-sm items-end">
-                  <p className="text-xs font-semibold text-muted-foreground px-3">Tú</p>
-                  <div className="bg-primary/90 hover:bg-primary transition-colors rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm">
-                    <p className="text-primary-foreground text-sm leading-1.5">Muchas gracias por la retroalimentación. Continuaré esforzándome.</p>
+              <div className="flex gap-3 justify-end items-end">
+                <div className="flex flex-col gap-1 items-end">
+                  <div className="bg-primary rounded-3xl rounded-br-sm px-5 py-3 shadow-sm max-w-lg">
+                    <p className="text-primary-foreground text-sm break-words">Muchas gracias por la retroalimentación. Continuaré esforzándome.</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-3">Hoy 2:45 PM</p>
+                  <span className="text-xs text-muted-foreground/70 px-3">Hoy 2:45 PM</span>
                 </div>
               </div>
 
               {/* Segundo mensaje del profesor */}
-              <div className="flex gap-3 justify-start">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+              <div className="flex gap-3 justify-start items-end">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
                   <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
                 </div>
-                <div className="flex flex-col gap-0.5 max-w-sm">
-                  <p className="text-xs font-semibold text-muted-foreground px-3">{selectedMessage.from}</p>
-                  <div className="bg-muted/80 hover:bg-muted transition-colors rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm">
-                    <p className="text-foreground text-sm leading-1.5">¡Excelente! Esperamos verte en clase.</p>
+                <div className="flex flex-col gap-1">
+                  <div className="bg-muted rounded-3xl rounded-bl-sm px-5 py-3 shadow-sm">
+                    <p className="text-foreground text-sm break-words">¡Excelente! Esperamos verte en clase.</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-3">Hoy 2:50 PM</p>
+                  <span className="text-xs text-muted-foreground/70 px-3">Hoy 2:50 PM</span>
                 </div>
               </div>
 
-              <div className="mt-auto"></div>
+              <div className="flex-1"></div>
             </div>
 
             {/* Input Area - Mejorado */}
