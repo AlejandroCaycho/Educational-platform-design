@@ -144,62 +144,92 @@ export default function Mensajes() {
         ))}
       </div>
 
-      {/* Modal - Ver Conversación */}
+      {/* Modal - Chat Style Conversación */}
       {showModal && selectedMessage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-card rounded-2xl border border-border max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
-            {/* Header Modal */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border p-6 flex items-center justify-between">
+          <div className="bg-card rounded-2xl border border-border max-w-2xl w-full h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+            {/* Header Chat */}
+            <div className="bg-gradient-to-r from-primary to-primary/80 p-4 flex items-center justify-between text-white">
               <div>
-                <h2 className="text-xl font-bold text-foreground">{selectedMessage.from}</h2>
-                <p className="text-sm text-muted-foreground">{selectedMessage.subject}</p>
+                <h2 className="text-lg font-bold">{selectedMessage.from}</h2>
+                <p className="text-xs text-white/80">Activo ahora</p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-foreground" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Mensaje */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-4">
-                <div className="bg-background rounded-xl p-4 border border-border/50">
-                  <p className="text-foreground leading-relaxed">{selectedMessage.message}</p>
-                  <p className="text-xs text-muted-foreground mt-3">{selectedMessage.time}</p>
+            {/* Chat Messages - Conversation Thread */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-background to-background/50 flex flex-col">
+              {/* Mensaje inicial del profesor */}
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex flex-col gap-1 max-w-xs">
+                  <div className="bg-muted rounded-3xl rounded-tl-sm px-4 py-3">
+                    <p className="text-foreground text-sm">{selectedMessage.message}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground px-2">{selectedMessage.time}</p>
                 </div>
               </div>
-            </div>
 
-            {/* Reply Section */}
-            <div className="border-t border-border bg-background/50 p-6 space-y-4">
-              <div>
-                <label className="text-sm font-medium text-foreground block mb-2">Respuesta</label>
-                <textarea
-                  placeholder="Escribe tu respuesta aquí..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-                  rows={4}
-                />
+              {/* Mensaje de respuesta simulado */}
+              <div className="flex gap-3 justify-end">
+                <div className="flex flex-col gap-1 max-w-xs items-end">
+                  <div className="bg-primary rounded-3xl rounded-tr-sm px-4 py-3">
+                    <p className="text-primary-foreground text-sm">Muchas gracias por la retroalimentación. Continuaré esforzándome.</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground px-2">Hoy 2:45 PM</p>
+                </div>
               </div>
 
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors font-medium text-foreground"
-                >
-                  Cancelar
-                </button>
+              {/* Segundo mensaje del profesor */}
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex flex-col gap-1 max-w-xs">
+                  <div className="bg-muted rounded-3xl rounded-tl-sm px-4 py-3">
+                    <p className="text-foreground text-sm">¡Excelente! Esperamos verte en clase.</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground px-2">Hoy 2:50 PM</p>
+                </div>
+              </div>
+
+              <div className="mt-auto"></div>
+            </div>
+
+            {/* Input Area */}
+            <div className="border-t border-border bg-background p-4">
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Escribe un mensaje..."
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleReply(selectedMessage.id);
+                    }
+                  }}
+                  className="flex-1 px-4 py-3 bg-muted border border-border/50 rounded-full text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                />
                 <button
                   onClick={() => {
-                    handleReply(selectedMessage.id);
+                    if (replyText.trim()) {
+                      handleReply(selectedMessage.id);
+                    }
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium"
+                  disabled={!replyText.trim()}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+                  title="Enviar mensaje"
                 >
                   <Send className="w-4 h-4" />
-                  Enviar
                 </button>
               </div>
             </div>
