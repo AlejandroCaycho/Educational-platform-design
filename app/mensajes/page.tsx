@@ -146,69 +146,99 @@ export default function Mensajes() {
 
       {/* Modal - Chat Style Conversación */}
       {showModal && selectedMessage && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-card rounded-2xl border border-border max-w-2xl w-full h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-            {/* Header Chat */}
-            <div className="bg-gradient-to-r from-primary to-primary/80 p-4 flex items-center justify-between text-white">
-              <div>
-                <h2 className="text-lg font-bold">{selectedMessage.from}</h2>
-                <p className="text-xs text-white/80">Activo ahora</p>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-card rounded-2xl border border-border/50 max-w-2xl w-full h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+            {/* Header Chat - Mejorado */}
+            <div className="bg-gradient-to-r from-primary via-primary to-primary/90 px-6 py-4 flex items-center justify-between text-white shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
+                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+                </div>
+                <div>
+                  <h2 className="font-bold text-base">{selectedMessage.from}</h2>
+                  <p className="text-xs text-white/70 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                    Activo ahora
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="p-2 hover:bg-white/20 rounded-full transition-all hover:scale-110"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Chat Messages - Conversation Thread */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-background to-background/50 flex flex-col">
+            <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-background flex flex-col">
+              {/* Separador de fecha */}
+              <div className="flex items-center gap-3 my-2">
+                <div className="flex-1 h-px bg-border"></div>
+                <p className="text-xs text-muted-foreground font-medium">Hoy</p>
+                <div className="flex-1 h-px bg-border"></div>
+              </div>
+
               {/* Mensaje inicial del profesor */}
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                  <MessageSquare className="w-4 h-4 text-primary" />
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
                 </div>
-                <div className="flex flex-col gap-1 max-w-xs">
-                  <div className="bg-muted rounded-3xl rounded-tl-sm px-4 py-3">
-                    <p className="text-foreground text-sm">{selectedMessage.message}</p>
+                <div className="flex flex-col gap-0.5 max-w-sm">
+                  <p className="text-xs font-semibold text-muted-foreground px-3">{selectedMessage.from}</p>
+                  <div className="bg-muted/80 hover:bg-muted transition-colors rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm">
+                    <p className="text-foreground text-sm leading-1.5">{selectedMessage.message}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-2">{selectedMessage.time}</p>
+                  <p className="text-xs text-muted-foreground px-3">{selectedMessage.time}</p>
+                </div>
+              </div>
+
+              {/* Indicador de escritura */}
+              <div className="flex gap-3 justify-start items-end">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
+                </div>
+                <div className="flex gap-1.5 px-4 py-3 bg-muted/60 rounded-2xl rounded-tl-sm shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce"></div>
+                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
 
               {/* Mensaje de respuesta simulado */}
               <div className="flex gap-3 justify-end">
-                <div className="flex flex-col gap-1 max-w-xs items-end">
-                  <div className="bg-primary rounded-3xl rounded-tr-sm px-4 py-3">
-                    <p className="text-primary-foreground text-sm">Muchas gracias por la retroalimentación. Continuaré esforzándome.</p>
+                <div className="flex flex-col gap-0.5 max-w-sm items-end">
+                  <p className="text-xs font-semibold text-muted-foreground px-3">Tú</p>
+                  <div className="bg-primary/90 hover:bg-primary transition-colors rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm">
+                    <p className="text-primary-foreground text-sm leading-1.5">Muchas gracias por la retroalimentación. Continuaré esforzándome.</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-2">Hoy 2:45 PM</p>
+                  <p className="text-xs text-muted-foreground px-3">Hoy 2:45 PM</p>
                 </div>
               </div>
 
               {/* Segundo mensaje del profesor */}
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                  <MessageSquare className="w-4 h-4 text-primary" />
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
                 </div>
-                <div className="flex flex-col gap-1 max-w-xs">
-                  <div className="bg-muted rounded-3xl rounded-tl-sm px-4 py-3">
-                    <p className="text-foreground text-sm">¡Excelente! Esperamos verte en clase.</p>
+                <div className="flex flex-col gap-0.5 max-w-sm">
+                  <p className="text-xs font-semibold text-muted-foreground px-3">{selectedMessage.from}</p>
+                  <div className="bg-muted/80 hover:bg-muted transition-colors rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm">
+                    <p className="text-foreground text-sm leading-1.5">¡Excelente! Esperamos verte en clase.</p>
                   </div>
-                  <p className="text-xs text-muted-foreground px-2">Hoy 2:50 PM</p>
+                  <p className="text-xs text-muted-foreground px-3">Hoy 2:50 PM</p>
                 </div>
               </div>
 
               <div className="mt-auto"></div>
             </div>
 
-            {/* Input Area */}
-            <div className="border-t border-border bg-background p-4">
-              <div className="flex gap-3">
+            {/* Input Area - Mejorado */}
+            <div className="border-t border-border/50 bg-background px-5 py-4 space-y-3">
+              <div className="flex items-end gap-3">
                 <input
                   type="text"
-                  placeholder="Escribe un mensaje..."
+                  placeholder="Aa"
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   onKeyPress={(e) => {
@@ -217,7 +247,7 @@ export default function Mensajes() {
                       handleReply(selectedMessage.id);
                     }
                   }}
-                  className="flex-1 px-4 py-3 bg-muted border border-border/50 rounded-full text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="flex-1 px-4 py-3 bg-muted/60 border border-border/30 rounded-2xl text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all text-sm"
                 />
                 <button
                   onClick={() => {
@@ -226,12 +256,13 @@ export default function Mensajes() {
                     }
                   }}
                   disabled={!replyText.trim()}
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
-                  title="Enviar mensaje"
+                  className="flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow-md active:scale-95"
+                  title="Enviar mensaje (Enter)"
                 >
                   <Send className="w-4 h-4" />
                 </button>
               </div>
+              <p className="text-xs text-muted-foreground/70 px-1">Presiona Enter para enviar</p>
             </div>
           </div>
         </div>
