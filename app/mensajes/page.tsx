@@ -192,18 +192,6 @@ export default function Mensajes() {
                 </div>
               </div>
 
-              {/* Indicador de escritura */}
-              <div className="flex gap-3 justify-start items-end">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
-                  <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-3 bg-muted rounded-3xl rounded-bl-sm shadow-sm">
-                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                </div>
-              </div>
-
               {/* Mensaje de respuesta simulado */}
               <div className="flex gap-3 justify-end items-end">
                 <div className="flex flex-col gap-1 items-end">
@@ -224,6 +212,18 @@ export default function Mensajes() {
                     <p className="text-foreground text-sm break-words">¡Excelente! Esperamos verte en clase.</p>
                   </div>
                   <span className="text-xs text-muted-foreground/70 px-3">Hoy 2:50 PM</span>
+                </div>
+              </div>
+
+              {/* Indicador de escritura - Ahora al final */}
+              <div className="flex gap-3 justify-start items-end">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-xs font-bold text-primary">{selectedMessage.from.charAt(0)}</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-3 bg-muted rounded-3xl rounded-bl-sm shadow-sm">
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/50 animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
 
