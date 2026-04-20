@@ -82,7 +82,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="p-5 md:p-6 space-y-6">
+    <div className={`p-5 md:p-6 space-y-6 flex flex-col transition-all duration-300 ${!showWelcome && !isHiding ? 'h-screen' : ''}`}>
       {/* Welcome Notification */}
       {showWelcome && (
         <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
@@ -155,14 +155,14 @@ export default function Home() {
       </div>
 
       {/* Charts Section - 3 Abajo */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0`}>
         {/* Performance Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-semibold text-foreground">Desempeño por Materia</h3>
             <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Horizontal</div>
           </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <BarChart data={performanceData} layout="vertical">
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
               <XAxis type="number" stroke="#9ca3af" style={{fontSize: '12px'}} />
@@ -174,12 +174,12 @@ export default function Home() {
         </div>
 
         {/* Incidents Pie Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-semibold text-foreground">Tipos de Incidencias</h3>
             <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Gráfico circular</div>
           </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <PieChart>
               <Pie data={incidentsData} cx="50%" cy="50%" labelLine={true} outerRadius={70} fill="#8884d8" dataKey="value" label={({ name }) => name}>
                 {incidentsData.map((entry, index) => (
@@ -192,12 +192,12 @@ export default function Home() {
         </div>
 
         {/* Calificaciones Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-semibold text-foreground">Distribución de Calificaciones (0-20)</h3>
             <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">Gráfico de barras</div>
           </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <BarChart data={[
               { name: '16-20', value: 45 },
               { name: '14-15', value: 85 },
