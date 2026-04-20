@@ -319,58 +319,58 @@ export default function Calendario() {
       {/* Modal - Evento Detallado */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-card rounded-2xl border border-border/50 max-w-lg w-full max-h-[75vh] overflow-hidden flex flex-col shadow-2xl">
+          <div className="bg-card rounded-2xl border border-border/50 max-w-sm w-full max-h-[75vh] overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary via-primary to-primary/90 px-5 py-3 flex items-center justify-between text-white">
-              <h2 className="font-bold text-base">{selectedEvent ? 'Editar Evento' : 'Nuevo Evento'}</h2>
+            <div className="bg-gradient-to-r from-primary via-primary to-primary/90 px-4 py-2.5 flex items-center justify-between text-white">
+              <h2 className="font-bold text-sm">{selectedEvent ? 'Editar' : 'Nuevo'} Evento</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-white/20 rounded-full transition-all hover:scale-110"
+                className="p-1 hover:bg-white/20 rounded-lg transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Contenido */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5">
               <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">Título *</label>
+                <label className="text-xs font-semibold text-foreground block mb-1">Título *</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ej: Reunión de Padres"
-                  className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  placeholder="Ej: Reunión"
+                  className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">Descripción</label>
+                <label className="text-xs font-semibold text-foreground block mb-1">Descripción</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Detalles del evento..."
-                  className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
+                  placeholder="Detalles..."
+                  className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
                   rows={2}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">Hora *</label>
+                  <label className="text-xs font-semibold text-foreground block mb-1">Hora *</label>
                   <input
                     type="time"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">Tipo</label>
+                  <label className="text-xs font-semibold text-foreground block mb-1">Tipo</label>
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   >
                     <option value="reunion">Reunión</option>
                     <option value="cita">Cita</option>
@@ -381,40 +381,40 @@ export default function Calendario() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">Ubicación</label>
+                <label className="text-xs font-semibold text-foreground block mb-1">Ubicación</label>
                 <input
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Ej: Aula 101"
-                  className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">Participantes</label>
+                <label className="text-xs font-semibold text-foreground block mb-1">Participantes</label>
                 <input
                   type="text"
                   value={formData.attendees}
                   onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
-                  placeholder="Ej: Prof. García, Padres"
-                  className="w-full px-3 py-2 bg-muted border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  placeholder="Separados por comas"
+                  className="w-full px-2.5 py-1.5 bg-muted border border-border/50 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
               {selectedDate && (
-                <div className="p-3 bg-muted/50 rounded-lg border border-border/30 text-xs text-muted-foreground">
-                  <strong>Fecha:</strong> {selectedDate.toLocaleDateString('es-ES', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                <div className="p-2 bg-muted/50 rounded-lg border border-border/30 text-xs text-muted-foreground">
+                  <strong>Fecha:</strong> {selectedDate.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
                 </div>
               )}
             </div>
 
             {/* Footer */}
-            <div className="border-t border-border/50 bg-background/50 px-4 py-3 flex gap-2 justify-end">
+            <div className="border-t border-border/50 bg-background/50 px-3.5 py-2.5 flex gap-1.5 justify-end">
               {selectedEvent && (
                 <button
                   onClick={() => handleDeleteEvent(selectedEvent.id)}
-                  className="flex items-center gap-1 px-3 py-1.5 text-sm border border-destructive text-destructive rounded-lg hover:bg-destructive/10 transition-all font-medium"
+                  className="flex items-center gap-0.5 px-2 py-1 text-xs border border-destructive text-destructive rounded-lg hover:bg-destructive/10 transition-all font-medium"
                 >
                   <Trash2 className="w-3 h-3" />
                   Eliminar
@@ -422,14 +422,14 @@ export default function Calendario() {
               )}
               <button
                 onClick={() => setShowModal(false)}
-                className="px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-muted transition-colors font-medium text-foreground"
+                className="px-2 py-1 text-xs border border-border rounded-lg hover:bg-muted transition-colors font-medium text-foreground"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveEvent}
                 disabled={!formData.title || !formData.time}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {selectedEvent ? 'Actualizar' : 'Crear'}
               </button>
