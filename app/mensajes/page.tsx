@@ -93,9 +93,10 @@ export default function Mensajes() {
   );
 
   return (
-    <div className="h-[calc(100vh-180px)] flex gap-4 p-5 md:p-6 bg-background">
+    <div className="min-h-screen flex flex-col p-5 md:p-6 bg-background">
+      <div className="flex-1 flex gap-4">
       {/* Sidebar - Lista de Chats */}
-      <div className="w-full md:w-80 flex flex-col rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 overflow-hidden shadow-sm">
+      <div className="w-full md:w-80 flex flex-col rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 overflow-hidden shadow-sm h-full">
         {/* Header Sidebar */}
         <div className="px-4 py-4 border-b border-border/50 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
@@ -172,7 +173,7 @@ export default function Mensajes() {
 
       {/* Chat Area - Conversación */}
       {selectedMessage ? (
-        <div className="hidden md:flex flex-1 flex-col rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 overflow-hidden shadow-sm">
+        <div className="hidden md:flex flex-1 flex-col rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 overflow-hidden shadow-sm h-full">
           {/* Chat Header */}
           <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-primary/5 to-primary/10">
             <div className="flex items-center gap-3">
@@ -267,13 +268,14 @@ export default function Mensajes() {
           </div>
         </div>
       ) : (
-        <div className="hidden md:flex flex-1 rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 items-center justify-center">
+        <div className="hidden md:flex flex-1 rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 items-center justify-center h-full">
           <div className="text-center space-y-3">
             <MessageSquare className="w-12 h-12 text-muted-foreground/30 mx-auto" />
             <p className="text-muted-foreground font-medium">Selecciona un chat</p>
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
