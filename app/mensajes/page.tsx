@@ -93,8 +93,8 @@ export default function Mensajes() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col p-5 md:p-6 bg-background">
-      <div className="flex-1 flex gap-4">
+    <div className="h-screen flex flex-col bg-background">
+      <div className="flex-1 flex gap-4 p-5 md:p-6">
       {/* Sidebar - Lista de Chats */}
       <div className="w-full md:w-80 flex flex-col rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 overflow-hidden shadow-sm h-full">
         {/* Header Sidebar */}
