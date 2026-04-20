@@ -162,7 +162,7 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-foreground">Desempeño por Materia</h3>
             <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Horizontal</div>
           </div>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <BarChart data={performanceData} layout="vertical">
               <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
               <XAxis type="number" stroke="#9ca3af" style={{fontSize: '12px'}} />
@@ -179,7 +179,7 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-foreground">Tipos de Incidencias</h3>
             <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Gráfico circular</div>
           </div>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <PieChart>
               <Pie data={incidentsData} cx="50%" cy="50%" labelLine={true} outerRadius={70} fill="#8884d8" dataKey="value" label={({ name }) => name}>
                 {incidentsData.map((entry, index) => (
@@ -197,7 +197,7 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-foreground">Distribución de Calificaciones (0-20)</h3>
             <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">Gráfico de barras</div>
           </div>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
             <BarChart data={[
               { name: '16-20', value: 45 },
               { name: '14-15', value: 85 },
