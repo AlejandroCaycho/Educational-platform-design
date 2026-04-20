@@ -82,7 +82,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={`p-5 md:p-6 space-y-6 flex flex-col ${!showWelcome ? 'h-screen' : ''}`}>
+    <div className={`p-5 md:p-6 space-y-6 flex flex-col transition-all duration-300 ${!showWelcome && !isHiding ? 'h-screen' : ''}`}>
       {/* Welcome Notification */}
       {showWelcome && (
         <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
