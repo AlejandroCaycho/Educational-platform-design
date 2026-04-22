@@ -62,6 +62,15 @@ export default function Calendario() {
     attendees: ''
   });
   const [showTutoringSection, setShowTutoringSection] = useState(false);
+  const [showTutoringModal, setShowTutoringModal] = useState(false);
+  const [tutoringData, setTutoringData] = useState({
+    date: '',
+    time: '',
+    tutor: '',
+    subject: '',
+    type: 'tutor' as 'tutor' | 'profesor' | 'director',
+    notes: ''
+  });
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -142,6 +151,26 @@ export default function Calendario() {
     setSelectedEvent(null);
   };
 
+  const handleSaveTutoring = () => {
+    if (!tutoringData.date || !tutoringData.time || !tutoringData.tutor || !tutoringData.subject) return;
+
+    const [year, month, day] = tutoringData.date.split('-').map(Number);
+    const tutoringEvent: Event = {
+      id: Date.now().toString(),
+      date: new Date(year, month - 1, day),
+      title: `Tutoría con ${tutoringData.tutor}`,
+      description: `Materia: ${tutoringData.subject}\nTipo: ${tutoringData.type}\n${tutoringData.notes}`,
+      time: tutoringData.time,
+      location: 'Por definir',
+      type: 'tutoría',
+      attendees: [tutoringData.tutor, `Tipo: ${tutoringData.type}`]
+    };
+
+    setEventos([...eventos, tutoringEvent]);
+    setShowTutoringModal(false);
+    setTutoringData({ date: '', time: '', tutor: '', subject: '', type: 'tutor', notes: '' });
+  };
+
   const getEventsForDate = (date: Date) => {
     return eventos.filter(e =>
       e.date.getDate() === date.getDate() &&
@@ -191,18 +220,27 @@ export default function Calendario() {
           <h1 className="text-2xl font-bold text-foreground">Calendario</h1>
           <p className="text-xs text-muted-foreground">Gestiona tus eventos y reuniones</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedDate(null);
-            setSelectedEvent(null);
-            setShowModal(true);
-            setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
-          }}
-          className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-sm font-medium whitespace-nowrap text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Nuevo
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setSelectedDate(null);
+              setSelectedEvent(null);
+              setShowModal(true);
+              setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
+            }}
+            className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-sm font-medium whitespace-nowrap text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Evento
+          </button>
+          <button
+            onClick={() => setShowTutoringModal(true)}
+            className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-sm font-medium whitespace-nowrap text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Tutoría
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 flex gap-4 p-5 md:p-6">
@@ -472,6 +510,133 @@ export default function Calendario() {
                   {selectedEvent ? 'Guardar' : 'Crear'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal - Agendar Tutoría */}
+      {showTutoringModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-500/10 to-purple-400/5 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+              <div>
+                <h2 className="font-bold text-lg text-foreground">Agendar Tutoría</h2>
+                <p className="text-xs text-muted-foreground/70">Selecciona un tutor o profesor</p>
+              </div>
+              <button
+                onClick={() => setShowTutoringModal(false)}
+                className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Contenido */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-2">Tipo de Persona</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: 'tutor', label: 'Tutor' },
+                    { value: 'profesor', label: 'Profesor' },
+                    { value: 'director', label: 'Director' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setTutoringData({ ...tutoringData, type: option.value as any })}
+                      className={`px-3 py-2 rounded-lg font-medium text-sm transition-all border ${
+                        tutoringData.type === option.value
+                          ? 'bg-purple-600 text-white border-purple-600 shadow-md'
+                          : 'bg-muted/50 text-foreground border-border/30 hover:border-purple-300'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-2">Nombre del {
+                  tutoringData.type === 'tutor' ? 'Tutor' :
+                  tutoringData.type === 'profesor' ? 'Profesor' : 'Director'
+                } *</label>
+                <input
+                  type="text"
+                  value={tutoringData.tutor}
+                  onChange={(e) => setTutoringData({ ...tutoringData, tutor: e.target.value })}
+                  placeholder="Ej: Prof. García"
+                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-2">Materia/Tema *</label>
+                <input
+                  type="text"
+                  value={tutoringData.subject}
+                  onChange={(e) => setTutoringData({ ...tutoringData, subject: e.target.value })}
+                  placeholder="Ej: Matemáticas"
+                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">Fecha *</label>
+                  <input
+                    type="date"
+                    value={tutoringData.date}
+                    onChange={(e) => setTutoringData({ ...tutoringData, date: e.target.value })}
+                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-2">Hora *</label>
+                  <input
+                    type="time"
+                    value={tutoringData.time}
+                    onChange={(e) => setTutoringData({ ...tutoringData, time: e.target.value })}
+                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-2">Notas adicionales</label>
+                <textarea
+                  value={tutoringData.notes}
+                  onChange={(e) => setTutoringData({ ...tutoringData, notes: e.target.value })}
+                  placeholder="Temas a tratar, objetivos, etc..."
+                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <p className="text-xs text-purple-700">
+                  La tutoría se agregará a tu calendario como un evento especial que puedes editar después.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-border/30 bg-muted/20 px-6 py-3 flex gap-2 justify-end flex-shrink-0">
+              <button
+                onClick={() => setShowTutoringModal(false)}
+                className="px-4 py-1.5 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium text-foreground"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveTutoring}
+                disabled={!tutoringData.date || !tutoringData.time || !tutoringData.tutor || !tutoringData.subject}
+                className="px-4 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Agendar
+              </button>
             </div>
           </div>
         </div>
