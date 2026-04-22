@@ -10,7 +10,7 @@ interface Event {
   description: string;
   time: string;
   location: string;
-  type: 'reunion' | 'cita' | 'tarea' | 'otro';
+  type: 'reunion' | 'cita' | 'tarea' | 'tutoría' | 'otro';
   attendees: string[];
 }
 
@@ -61,6 +61,7 @@ export default function Calendario() {
     type: 'reunion' as const,
     attendees: ''
   });
+  const [showTutoringSection, setShowTutoringSection] = useState(false);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -154,6 +155,7 @@ export default function Calendario() {
       case 'reunion': return 'bg-blue-100 text-blue-700 border-blue-200';
       case 'cita': return 'bg-green-100 text-green-700 border-green-200';
       case 'tarea': return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'tutoría': return 'bg-purple-100 text-purple-700 border-purple-200';
       default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
@@ -163,6 +165,7 @@ export default function Calendario() {
       case 'reunion': return 'Reunión';
       case 'cita': return 'Cita';
       case 'tarea': return 'Tarea';
+      case 'tutoría': return 'Tutoría';
       default: return 'Otro';
     }
   };
@@ -323,9 +326,9 @@ export default function Calendario() {
       {/* Modal - Evento Detallado */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/30 px-6 py-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/30 px-6 py-3 flex items-center justify-between flex-shrink-0">
               <div>
                 <h2 className="font-bold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'}</h2>
                 <p className="text-xs text-muted-foreground/70">Evento</p>
@@ -339,86 +342,110 @@ export default function Calendario() {
             </div>
 
             {/* Contenido */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Título*</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ej: Reunión con padres"
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Descripción</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Detalles sobre el evento..."
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Hora*</label>
+                  <label className="text-sm font-semibold text-foreground block mb-1.5">Título*</label>
                   <input
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ej: Reunión"
+                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Tipo</label>
+                  <label className="text-sm font-semibold text-foreground block mb-1.5">Tipo</label>
                   <select
                     value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    onChange={(e) => {
+                      setFormData({ ...formData, type: e.target.value as any });
+                      setShowTutoringSection(e.target.value === 'tutoría');
+                    }}
+                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   >
                     <option value="reunion">Reunión</option>
                     <option value="cita">Cita</option>
                     <option value="tarea">Tarea</option>
+                    <option value="tutoría">Tutoría</option>
                     <option value="otro">Otro</option>
                   </select>
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Ubicación</label>
-                <input
-                  type="text"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Ej: Aula 101 o Virtual"
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-1.5">Hora*</label>
+                  <input
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-foreground block mb-1.5">Ubicación</label>
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="Ej: Aula 101"
+                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Participantes</label>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Participantes</label>
                 <input
                   type="text"
                   value={formData.attendees}
                   onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
                   placeholder="Separados por comas"
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-1.5">Descripción</label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Detalles..."
+                  className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
+                  rows={2}
+                />
+              </div>
+
+              {showTutoringSection && (
+                <div className="p-4 rounded-lg bg-purple-50 border border-purple-200 space-y-3">
+                  <h3 className="font-semibold text-sm text-purple-900">Detalles de Tutoría</h3>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-purple-700/80 font-medium">Materia</p>
+                      <p className="text-purple-600 text-xs mt-1">Se especifica en participantes</p>
+                    </div>
+                    <div>
+                      <p className="text-purple-700/80 font-medium">Nivel</p>
+                      <p className="text-purple-600 text-xs mt-1">Individual o grupal</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-purple-600 p-2 bg-purple-100/50 rounded">
+                    Recuerda incluir el docente tutor y el tema a tratar en los campos anteriores.
+                  </div>
+                </div>
+              )}
+
               {selectedDate && (
                 <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-foreground">
-                  <strong className="block text-xs text-muted-foreground/70 mb-1">Fecha</strong>
+                  <strong className="block text-xs text-muted-foreground/70 mb-1">Fecha Seleccionada</strong>
                   {selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}
                 </div>
               )}
             </div>
 
             {/* Footer */}
-            <div className="border-t border-border/30 bg-muted/20 px-6 py-3 flex gap-2 justify-between">
+            <div className="border-t border-border/30 bg-muted/20 px-6 py-3 flex gap-2 justify-between flex-shrink-0">
               <div>
                 {selectedEvent && (
                   <button
