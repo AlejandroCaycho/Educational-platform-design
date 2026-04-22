@@ -34,10 +34,10 @@ const incidentsData = [
 ];
 
 const performanceTrend = [
-  { mes: 'Enero', matemáticas: 7.8, lenguaje: 8.1, ciencias: 7.9 },
-  { mes: 'Febrero', matemáticas: 8.0, lenguaje: 8.3, ciencias: 8.0 },
-  { mes: 'Marzo', matemáticas: 8.2, lenguaje: 8.5, ciencias: 8.1 },
-  { mes: 'Abril', matemáticas: 8.2, lenguaje: 8.5, ciencias: 8.3 },
+  { mes: 'Enero', matematicas: 7.8, lenguaje: 8.1, ciencias: 7.9 },
+  { mes: 'Febrero', matematicas: 8.0, lenguaje: 8.3, ciencias: 8.0 },
+  { mes: 'Marzo', matematicas: 8.2, lenguaje: 8.5, ciencias: 8.1 },
+  { mes: 'Abril', matematicas: 8.2, lenguaje: 8.5, ciencias: 8.3 },
 ];
 
 export default function Reportes() {
@@ -144,9 +144,9 @@ export default function Reportes() {
                     <YAxis stroke="rgb(107, 114, 128)" style={{ fontSize: '12px' }} />
                     <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid rgb(229, 231, 235)', borderRadius: '8px', fontSize: '12px' }} />
                     <Legend wrapperStyle={{ fontSize: '12px' }} />
-                    <Area type="monotone" dataKey="matemáticas" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMat)" />
-                    <Area type="monotone" dataKey="lenguaje" stroke="#10b981" fillOpacity={1} fill="url(#colorLen)" />
-                    <Area type="monotone" dataKey="ciencias" stroke="#f59e0b" fillOpacity={1} fill="url(#colorCien)" />
+                    <Area type="monotone" dataKey="matematicas" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMat)" name="Matemáticas" />
+                    <Area type="monotone" dataKey="lenguaje" stroke="#10b981" fillOpacity={1} fill="url(#colorLen)" name="Lenguaje" />
+                    <Area type="monotone" dataKey="ciencias" stroke="#f59e0b" fillOpacity={1} fill="url(#colorCien)" name="Ciencias" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
