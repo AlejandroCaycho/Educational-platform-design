@@ -71,95 +71,110 @@ export default function Usuarios() {
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Usuarios</h1>
-        <p className="text-muted-foreground">Gestión de cuentas de usuarios del sistema</p>
+      <div className="px-5 md:px-6 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
+          <p className="text-xs text-muted-foreground">Gestión de cuentas del sistema</p>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-sm font-medium text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Nuevo
+        </button>
       </div>
 
-      {/* Filters and Actions */}
-      <div className="bg-card rounded-lg border border-border p-4 md:p-6 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Search */}
+      {/* Stats and Filters */}
+      <div className="px-5 md:px-6 py-3 border-b border-border/20 flex-shrink-0 space-y-3">
+        {/* Metrics */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-200/30 p-2.5">
+            <p className="text-xs text-muted-foreground/70 font-medium">Total Usuarios</p>
+            <p className="text-lg font-bold text-foreground">{usuarios.length}</p>
+          </div>
+          <div className="bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-200/30 p-2.5">
+            <p className="text-xs text-muted-foreground/70 font-medium">Activos</p>
+            <p className="text-lg font-bold text-foreground">{usuarios.filter(u => u.estado === 'Activo').length}</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-500/10 to-purple-400/5 rounded-lg border border-purple-200/30 p-2.5">
+            <p className="text-xs text-muted-foreground/70 font-medium">Docentes</p>
+            <p className="text-lg font-bold text-foreground">{usuarios.filter(u => u.rol === 'Docente').length}</p>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Buscar por nombre o email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full pl-10 pr-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
             />
           </div>
-
-          {/* Filter */}
           <select
             value={filtroRol}
             onChange={(e) => setFiltroRol(e.target.value)}
-            className="px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
           >
-            <option value="todos">Todos los Roles</option>
+            <option value="todos">Todos</option>
             <option value="Padre">Padres</option>
             <option value="Docente">Docentes</option>
-            <option value="Administrador">Administradores</option>
+            <option value="Administrador">Admin</option>
           </select>
-
-          {/* Add Button */}
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            <Plus className="w-4 h-4" />
-            Nuevo Usuario
-          </button>
         </div>
 
         {/* Add Form */}
         {showForm && (
-          <div className="border-t border-border pt-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-lg border border-border/30 p-3 space-y-3">
+            <h3 className="text-sm font-bold text-foreground">Crear Nuevo Usuario</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               <input
                 type="text"
-                placeholder="Nombre completo"
+                placeholder="Nombre"
                 value={newUser.nombre}
                 onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
-                className="px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-2.5 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={newUser.email}
                 onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                className="px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-2.5 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
               />
               <select
                 value={newUser.rol}
                 onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
-                className="px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-2.5 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
               >
                 <option value="Padre">Padre</option>
                 <option value="Docente">Docente</option>
-                <option value="Administrador">Administrador</option>
+                <option value="Administrador">Admin</option>
               </select>
               <input
                 type="text"
                 placeholder="Estudiante/Clase"
                 value={newUser.estudiante}
                 onChange={(e) => setNewUser({ ...newUser, estudiante: e.target.value })}
-                className="px-4 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-2.5 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-xs text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
               />
             </div>
             <div className="flex gap-2">
               <button
                 onClick={handleAddUser}
-                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold"
+                className="flex-1 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium text-xs"
               >
-                Agregar Usuario
+                Agregar
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
+                className="px-3 py-1.5 bg-muted/50 text-foreground rounded-lg hover:bg-muted transition-all font-medium text-xs border border-border/30"
               >
                 Cancelar
               </button>
@@ -169,79 +184,67 @@ export default function Usuarios() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-background">
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Nombre</th>
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Email</th>
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Rol</th>
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Asignación</th>
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Estado</th>
-                <th className="text-left px-4 py-4 font-semibold text-foreground">Fecha Registro</th>
-                <th className="text-center px-4 py-4 font-semibold text-foreground">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuariosFiltrados.map(usuario => (
-                <tr
-                  key={usuario.id}
-                  className="border-b border-border hover:bg-background transition-colors"
-                >
-                  <td className="px-4 py-4 text-foreground">{usuario.nombre}</td>
-                  <td className="px-4 py-4 text-muted-foreground text-sm">{usuario.email}</td>
-                  <td className="px-4 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleColor(usuario.rol)}`}>
-                      {usuario.rol}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-foreground text-sm">{usuario.estudiante}</td>
-                  <td className="px-4 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(usuario.estado)}`}>
-                      {usuario.estado}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-muted-foreground text-sm">{usuario.fecha}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <button className="p-2 hover:bg-muted rounded transition-colors">
-                        <Edit2 className="w-4 h-4 text-primary" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteUser(usuario.id)}
-                        className="p-2 hover:bg-destructive/20 rounded transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </button>
-                    </div>
-                  </td>
+      <div className="flex-1 overflow-hidden flex flex-col px-5 md:px-6 py-4">
+        <div className="flex-1 overflow-y-auto rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 shadow-sm">
+          <div className="overflow-x-auto h-full flex flex-col">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/30">
+                <tr>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Nombre</th>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Email</th>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Rol</th>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Asignación</th>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Estado</th>
+                  <th className="text-left px-4 py-3 font-semibold text-foreground text-xs">Registro</th>
+                  <th className="text-center px-4 py-3 font-semibold text-foreground text-xs">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {usuariosFiltrados.length === 0 && (
-          <div className="p-8 text-center">
-            <p className="text-muted-foreground">No se encontraron usuarios con los criterios de búsqueda</p>
+              </thead>
+              <tbody className="divide-y divide-border/20">
+                {usuariosFiltrados.length > 0 ? (
+                  usuariosFiltrados.map(usuario => (
+                    <tr
+                      key={usuario.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="px-4 py-3 text-foreground font-medium">{usuario.nombre}</td>
+                      <td className="px-4 py-3 text-muted-foreground text-xs">{usuario.email}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getRoleColor(usuario.rol)}`}>
+                          {usuario.rol}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-foreground text-xs">{usuario.estudiante}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(usuario.estado)}`}>
+                          {usuario.estado}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground text-xs">{usuario.fecha}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors text-primary hover:text-primary/80">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(usuario.id)}
+                            className="p-1.5 hover:bg-destructive/20 rounded-lg transition-colors text-destructive hover:text-destructive/80"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground/60 text-sm">
+                      No se encontraron usuarios con los criterios de búsqueda
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
-
-      {/* Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <p className="text-sm text-muted-foreground mb-1">Total Usuarios</p>
-          <p className="text-2xl font-bold text-foreground">{usuarios.length}</p>
-        </div>
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <p className="text-sm text-muted-foreground mb-1">Usuarios Activos</p>
-          <p className="text-2xl font-bold text-foreground">{usuarios.filter(u => u.estado === 'Activo').length}</p>
-        </div>
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <p className="text-sm text-muted-foreground mb-1">Docentes</p>
-          <p className="text-2xl font-bold text-foreground">{usuarios.filter(u => u.rol === 'Docente').length}</p>
         </div>
       </div>
     </div>
