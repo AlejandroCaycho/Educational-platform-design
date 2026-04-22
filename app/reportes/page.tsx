@@ -117,13 +117,13 @@ export default function Reportes() {
         </div>
 
         {/* Charts Grid */}
-        <div className="flex-1 overflow-y-auto p-5 md:p-6">
+        <div className="flex-1 overflow-hidden p-4 md:p-5">
           {reportType === 'monthly' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 auto-rows-max">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
               {/* Tendencia de Desempeño - Area Chart */}
-              <div className="lg:col-span-2 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-foreground mb-3">Tendencia de Desempeño por Materia</h3>
-                <ResponsiveContainer width="100%" height={200}>
+              <div className="lg:col-span-2 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm flex flex-col">
+                <h3 className="text-sm font-bold text-foreground mb-2">Tendencia de Desempeño por Materia</h3>
+                <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={performanceTrend}>
                     <defs>
                       <linearGradient id="colorMat" x1="0" y1="0" x2="0" y2="1">
@@ -140,10 +140,10 @@ export default function Reportes() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgb(229, 231, 235)" />
-                    <XAxis dataKey="mes" stroke="rgb(107, 114, 128)" style={{ fontSize: '12px' }} />
-                    <YAxis stroke="rgb(107, 114, 128)" style={{ fontSize: '12px' }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid rgb(229, 231, 235)', borderRadius: '8px', fontSize: '12px' }} />
-                    <Legend wrapperStyle={{ fontSize: '12px' }} />
+                    <XAxis dataKey="mes" stroke="rgb(107, 114, 128)" style={{ fontSize: '11px' }} />
+                    <YAxis stroke="rgb(107, 114, 128)" style={{ fontSize: '11px' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid rgb(229, 231, 235)', borderRadius: '8px', fontSize: '11px' }} />
+                    <Legend wrapperStyle={{ fontSize: '11px' }} />
                     <Area type="monotone" dataKey="matematicas" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMat)" name="Matemáticas" />
                     <Area type="monotone" dataKey="lenguaje" stroke="#10b981" fillOpacity={1} fill="url(#colorLen)" name="Lenguaje" />
                     <Area type="monotone" dataKey="ciencias" stroke="#f59e0b" fillOpacity={1} fill="url(#colorCien)" name="Ciencias" />
@@ -152,9 +152,9 @@ export default function Reportes() {
               </div>
 
               {/* Asistencia - Line Chart */}
-              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-foreground mb-3">Asistencia Mensual</h3>
-                <ResponsiveContainer width="100%" height={160}>
+              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm flex flex-col">
+                <h3 className="text-sm font-bold text-foreground mb-2">Asistencia Mensual</h3>
+                <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={monthlyData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgb(229, 231, 235)" />
                     <XAxis dataKey="mes" stroke="rgb(107, 114, 128)" style={{ fontSize: '11px' }} />
@@ -166,9 +166,9 @@ export default function Reportes() {
               </div>
 
               {/* Desempeño - Bar Chart */}
-              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-foreground mb-3">Desempeño Académico</h3>
-                <ResponsiveContainer width="100%" height={160}>
+              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm flex flex-col">
+                <h3 className="text-sm font-bold text-foreground mb-2">Desempeño Académico</h3>
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={monthlyData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgb(229, 231, 235)" />
                     <XAxis dataKey="mes" stroke="rgb(107, 114, 128)" style={{ fontSize: '11px' }} />
@@ -180,16 +180,16 @@ export default function Reportes() {
               </div>
 
               {/* Desempeño por Materia - Pie Chart */}
-              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-foreground mb-3">Promedio por Materia</h3>
-                <ResponsiveContainer width="100%" height={160}>
+              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm flex flex-col">
+                <h3 className="text-sm font-bold text-foreground mb-2">Promedio por Materia</h3>
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={subjectPerformance}
                       cx="50%"
                       cy="50%"
-                      innerRadius={40}
-                      outerRadius={60}
+                      innerRadius={35}
+                      outerRadius={50}
                       paddingAngle={2}
                       dataKey="value"
                     >
@@ -204,16 +204,16 @@ export default function Reportes() {
               </div>
 
               {/* Incidencias - Pie Chart */}
-              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-foreground mb-3">Distribución de Incidencias</h3>
-                <ResponsiveContainer width="100%" height={160}>
+              <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm flex flex-col">
+                <h3 className="text-sm font-bold text-foreground mb-2">Distribución de Incidencias</h3>
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={incidentsData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={35}
-                      outerRadius={55}
+                      innerRadius={30}
+                      outerRadius={50}
                       paddingAngle={2}
                       dataKey="value"
                     >
@@ -224,25 +224,6 @@ export default function Reportes() {
                     <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid rgb(229, 231, 235)', borderRadius: '8px', fontSize: '11px' }} />
                   </PieChart>
                 </ResponsiveContainer>
-              </div>
-
-              {/* Stats Cards */}
-              <div className="lg:col-span-2 grid grid-cols-3 gap-3">
-                <div className="bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-xl border border-blue-200/30 p-3">
-                  <p className="text-xs text-muted-foreground/70 font-medium mb-1">Asistencia Promedio</p>
-                  <p className="text-2xl font-bold text-foreground">89.5%</p>
-                  <p className="text-xs text-green-600 mt-1">↑ 2% vs mes anterior</p>
-                </div>
-                <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-400/5 rounded-xl border border-cyan-200/30 p-3">
-                  <p className="text-xs text-muted-foreground/70 font-medium mb-1">Desempeño Promedio</p>
-                  <p className="text-2xl font-bold text-foreground">8.3</p>
-                  <p className="text-xs text-green-600 mt-1">↑ 0.2 vs mes anterior</p>
-                </div>
-                <div className="bg-gradient-to-br from-red-500/10 to-red-400/5 rounded-xl border border-red-200/30 p-3">
-                  <p className="text-xs text-muted-foreground/70 font-medium mb-1">Total Incidencias</p>
-                  <p className="text-2xl font-bold text-foreground">42</p>
-                  <p className="text-xs text-red-600 mt-1">↓ 5 vs mes anterior</p>
-                </div>
               </div>
             </div>
           )}
