@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, MapPin, User, Trash2, Edit2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, MapPin, User, Trash2, Edit2, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface Event {
   id: string;
@@ -61,16 +61,8 @@ export default function Calendario() {
     type: 'reunion' as const,
     attendees: ''
   });
-  const [showTutoringSection, setShowTutoringSection] = useState(false);
-  const [showTutoringModal, setShowTutoringModal] = useState(false);
-  const [tutoringData, setTutoringData] = useState({
-    date: '',
-    time: '',
-    tutor: '',
-    subject: '',
-    type: 'tutor' as 'tutor' | 'profesor' | 'director',
-    notes: ''
-  });
+  const [showTypeSelection, setShowTypeSelection] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -88,19 +80,67 @@ export default function Calendario() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   };
 
+  const isDatePassed = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  const hasConflict = (date: Date, time: string, excludeId?: string) => {
+    return eventos.some(e => {
+      if (excludeId && e.id === excludeId) return false;
+      return e.date.toDateString() === date.toDateString() && e.time === time;
+    });
+  };
+
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    if (!selectedDate) {
+      errors.push('Selecciona una fecha');
+    } else if (isDatePassed(selectedDate) && !selectedEvent) {
+      errors.push('No puedes crear eventos en fechas pasadas');
+    }
+    
+    if (!formData.title.trim()) {
+      errors.push('El título es obligatorio');
+    }
+    
+    if (!formData.time) {
+      errors.push('La hora es obligatoria');
+    } else if (hasConflict(selectedDate!, formData.time, selectedEvent?.id)) {
+      errors.push('Ya existe un evento en esa hora');
+    }
+    
+    if (formData.title.trim().length > 100) {
+      errors.push('El título no puede exceder 100 caracteres');
+    }
+    
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
   const handleDateClick = (day: number) => {
     const clicked = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    
+    // No permitir seleccionar fechas pasadas para nuevos eventos
+    if (isDatePassed(clicked)) {
+      setValidationErrors(['No puedes crear eventos en fechas pasadas']);
+      return;
+    }
+    
     setSelectedDate(clicked);
-    setShowModal(true);
     setSelectedEvent(null);
     setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
+    setShowTypeSelection(true);
+    setValidationErrors([]);
+    setShowModal(false);
   };
 
   const handleEventClick = (event: Event, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedEvent(event);
     setSelectedDate(event.date);
-    setShowModal(true);
     setFormData({
       title: event.title,
       description: event.description,
@@ -109,17 +149,20 @@ export default function Calendario() {
       type: event.type,
       attendees: event.attendees.join(', ')
     });
+    setShowTypeSelection(false);
+    setShowModal(true);
+    setValidationErrors([]);
   };
 
   const handleSaveEvent = () => {
-    if (!selectedDate || !formData.title || !formData.time) return;
+    if (!validateForm()) return;
 
     if (selectedEvent) {
       setEventos(eventos.map(e =>
         e.id === selectedEvent.id
           ? {
               ...e,
-              date: selectedDate,
+              date: selectedDate!,
               title: formData.title,
               description: formData.description,
               time: formData.time,
@@ -132,7 +175,7 @@ export default function Calendario() {
     } else {
       setEventos([...eventos, {
         id: Date.now().toString(),
-        date: selectedDate,
+        date: selectedDate!,
         title: formData.title,
         description: formData.description,
         time: formData.time,
@@ -142,33 +185,15 @@ export default function Calendario() {
       }]);
     }
     setShowModal(false);
+    setShowTypeSelection(false);
     setSelectedEvent(null);
+    setValidationErrors([]);
   };
 
   const handleDeleteEvent = (id: string) => {
     setEventos(eventos.filter(e => e.id !== id));
     setShowModal(false);
     setSelectedEvent(null);
-  };
-
-  const handleSaveTutoring = () => {
-    if (!tutoringData.date || !tutoringData.time || !tutoringData.tutor || !tutoringData.subject) return;
-
-    const [year, month, day] = tutoringData.date.split('-').map(Number);
-    const tutoringEvent: Event = {
-      id: Date.now().toString(),
-      date: new Date(year, month - 1, day),
-      title: `Tutoría con ${tutoringData.tutor}`,
-      description: `Materia: ${tutoringData.subject}\nTipo: ${tutoringData.type}\n${tutoringData.notes}`,
-      time: tutoringData.time,
-      location: 'Por definir',
-      type: 'tutoría',
-      attendees: [tutoringData.tutor, `Tipo: ${tutoringData.type}`]
-    };
-
-    setEventos([...eventos, tutoringEvent]);
-    setShowTutoringModal(false);
-    setTutoringData({ date: '', time: '', tutor: '', subject: '', type: 'tutor', notes: '' });
   };
 
   const getEventsForDate = (date: Date) => {
@@ -217,28 +242,22 @@ export default function Calendario() {
       {/* Header */}
       <div className="px-5 md:px-6 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Calendario</h1>
-          <p className="text-xs text-muted-foreground">Gestiona tus eventos y reuniones</p>
+          <h1 className="text-2xl font-bold text-foreground">📅 Mi Calendario</h1>
+          <p className="text-xs text-muted-foreground">Gestiona tus eventos, citas y reuniones</p>
         </div>
-        <div className="flex gap-2">
+        <div>
           <button
             onClick={() => {
+              setValidationErrors([]);
+              setShowTypeSelection(false);
               setSelectedDate(null);
               setSelectedEvent(null);
-              setShowModal(true);
               setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
             }}
-            className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-sm font-medium whitespace-nowrap text-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all shadow-lg font-semibold whitespace-nowrap text-sm hover:shadow-xl hover:scale-105"
           >
             <Plus className="w-4 h-4" />
-            Evento
-          </button>
-          <button
-            onClick={() => setShowTutoringModal(true)}
-            className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-sm font-medium whitespace-nowrap text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Tutoría
+            Crear Evento
           </button>
         </div>
       </div>
@@ -276,103 +295,204 @@ export default function Calendario() {
 
           {/* Días del mes */}
           <div className="grid grid-cols-7 gap-2 flex-1 overflow-hidden">
-            {days.map((day, index) => (
-              <div
-                key={index}
-                onClick={() => day && handleDateClick(day)}
-                className={`relative p-2 rounded-lg border transition-all group ${
-                  day
-                    ? 'border-border/50 hover:border-primary/50 cursor-pointer hover:bg-muted/30'
-                    : 'border-transparent'
-                } ${
-                  selectedDate &&
-                  day &&
-                  selectedDate.getDate() === day &&
-                  selectedDate.getMonth() === currentDate.getMonth() &&
-                  selectedDate.getFullYear() === currentDate.getFullYear()
-                    ? 'bg-primary/10 border-primary shadow-sm'
-                    : 'bg-background/50'
-                }`}
-              >
-                {day && (
-                  <>
-                    <div className="font-semibold text-foreground text-xs mb-1">{day}</div>
-                    <div className="space-y-0.5 max-h-16 overflow-y-auto">
-                      {getEventsForDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day)).map(event => (
-                        <button
-                          key={event.id}
-                          onClick={(e) => handleEventClick(event, e)}
-                          className={`w-full text-left text-xs px-1.5 py-0.5 rounded border cursor-pointer hover:opacity-90 transition-opacity truncate font-medium ${getTypeColor(event.type)}`}
-                          title={`${event.time} - ${event.title}`}
-                        >
-                          {event.time}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+            {days.map((day, index) => {
+              const dateForDay = day ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day) : null;
+              const isPassed = dateForDay && isDatePassed(dateForDay);
+              const dayEvents = day ? getEventsForDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day)) : [];
+              
+              return (
+                <div
+                  key={index}
+                  onClick={() => day && !isPassed && handleDateClick(day)}
+                  className={`relative p-2 rounded-lg border transition-all group ${
+                    day
+                      ? isPassed 
+                        ? 'border-border/20 bg-muted/20 cursor-not-allowed opacity-50'
+                        : 'border-border/50 hover:border-primary/70 cursor-pointer hover:bg-primary/5 hover:shadow-md'
+                      : 'border-transparent'
+                  } ${
+                    selectedDate &&
+                    day &&
+                    selectedDate.getDate() === day &&
+                    selectedDate.getMonth() === currentDate.getMonth() &&
+                    selectedDate.getFullYear() === currentDate.getFullYear()
+                      ? 'bg-primary/15 border-primary/70 shadow-lg'
+                      : 'bg-background/50'
+                  }`}
+                  title={isPassed && day ? 'Fecha pasada - no editable' : ''}
+                >
+                  {day && (
+                    <>
+                      <div className={`font-bold text-xs mb-1 flex items-center gap-1 ${isPassed ? 'text-muted-foreground/50' : 'text-foreground'}`}>
+                        {day}
+                        {isPassed && <span className="text-xs">✓</span>}
+                      </div>
+                      <div className="space-y-0.5 max-h-16 overflow-y-auto">
+                        {dayEvents.length > 0 ? (
+                          dayEvents.map(event => (
+                            <button
+                              key={event.id}
+                              onClick={(e) => handleEventClick(event, e)}
+                              className={`w-full text-left text-xs px-1.5 py-0.5 rounded border cursor-pointer hover:opacity-90 transition-opacity truncate font-semibold ${getTypeColor(event.type)}`}
+                              title={`${event.time} - ${event.title}`}
+                            >
+                              <span className="inline-block w-10 font-mono">{event.time}</span>
+                            </button>
+                          ))
+                        ) : (
+                          <div className="text-xs text-muted-foreground/40 text-center py-1">-</div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Sidebar - Lista de Eventos */}
-        <div className="w-full md:w-80 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-4 shadow-sm h-full flex flex-col overflow-hidden">
-          <h3 className="text-lg font-bold text-foreground mb-3 flex-shrink-0">Próximos</h3>
-          <div className="flex-1 overflow-y-auto space-y-2">
+        {/* Sidebar - Resumen de Reuniones */}
+        <div className="w-full md:w-96 bg-gradient-to-br from-blue-50 to-blue-50/50 dark:from-blue-950/30 dark:to-blue-950/20 rounded-2xl border border-blue-200/50 dark:border-blue-800/50 p-5 shadow-lg h-full flex flex-col overflow-hidden">
+          <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <Clock className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground">Resumen de Eventos</h3>
+          </div>
+          <div className="flex-1 overflow-y-auto space-y-2.5">
             {eventos.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground/60">
-                <p className="text-sm">Sin eventos</p>
+              <div className="text-center py-12 text-muted-foreground/60">
+                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-blue-400/50" />
+                <p className="text-sm font-medium">Sin eventos</p>
+                <p className="text-xs mt-1">Selecciona un día para crear uno</p>
               </div>
             ) : (
-              eventos.sort((a, b) => a.date.getTime() - b.date.getTime()).map(event => (
-                <button
-                  key={event.id}
-                  onClick={(e) => handleEventClick(event, e)}
-                  className={`w-full text-left p-3 rounded-lg border-2 transition-all hover:shadow-md group ${getTypeColor(event.type)}`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <span className="text-xs font-bold">{getTypeLabel(event.type)}</span>
-                    <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Edit2 className="w-3 h-3" />
-                    </span>
-                  </div>
-                  <p className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</p>
-                  <div className="space-y-1 text-xs">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 flex-shrink-0" />
-                      <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
-                      <span className="truncate">{event.location}</span>
-                    </div>
-                    {event.attendees.length > 0 && (
-                      <div className="flex items-center gap-1">
-                        <User className="w-3 h-3 flex-shrink-0" />
-                        <span className="truncate">{event.attendees.slice(0, 1).join(', ')}{event.attendees.length > 1 ? `+${event.attendees.length - 1}` : ''}</span>
+              eventos.sort((a, b) => a.date.getTime() - b.date.getTime()).map(event => {
+                const isEventPassed = isDatePassed(event.date);
+                return (
+                  <button
+                    key={event.id}
+                    onClick={(e) => handleEventClick(event, e)}
+                    className={`w-full text-left p-3.5 rounded-xl border-2 transition-all hover:shadow-lg group relative overflow-hidden ${
+                      getTypeColor(event.type)
+                    } ${isEventPassed ? 'opacity-60' : ''}`}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 group-hover:to-white/10 transition-all pointer-events-none" />
+                    <div className="relative flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-white/80 dark:bg-white/10">
+                          {getTypeLabel(event.type)}
+                        </span>
+                        {isEventPassed && <span className="text-xs opacity-70">✓ Pasado</span>}
                       </div>
-                    )}
-                  </div>
-                </button>
-              ))
+                      <Edit2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    </div>
+                    <p className="font-bold text-sm mb-2.5 line-clamp-2 text-foreground">{event.title}</p>
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="font-medium">{event.date.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' })} • {event.time}</span>
+                      </div>
+                      {event.location && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="truncate">{event.location}</span>
+                        </div>
+                      )}
+                      {event.attendees.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <User className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="truncate text-xs">
+                            {event.attendees.slice(0, 2).join(', ')}
+                            {event.attendees.length > 2 ? ` +${event.attendees.length - 2}` : ''}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })
             )}
           </div>
         </div>
       </div>
 
-      {/* Modal - Evento Detallado */}
-      {showModal && (
+      {/* Modal - Selector de Tipo de Evento */}
+      {showTypeSelection && selectedDate && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/30 px-6 py-3 flex items-center justify-between flex-shrink-0">
+            <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="font-bold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'}</h2>
-                <p className="text-xs text-muted-foreground/70">Evento</p>
+                <h2 className="font-bold text-lg text-foreground">Tipo de Evento</h2>
+                <p className="text-xs text-muted-foreground/70">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
               </div>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowTypeSelection(false);
+                  setSelectedDate(null);
+                }}
+                className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Contenido */}
+            <div className="flex-1 px-6 py-5 space-y-3">
+              <p className="text-sm text-muted-foreground mb-4">Selecciona el tipo de evento que deseas crear:</p>
+              {[
+                { value: 'reunion', label: 'Reunión', icon: '👥', color: 'from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 border-blue-300/50' },
+                { value: 'cita', label: 'Cita', icon: '📅', color: 'from-green-500/20 to-green-600/20 hover:from-green-500/30 hover:to-green-600/30 border-green-300/50' },
+                { value: 'tarea', label: 'Tarea', icon: '✓', color: 'from-orange-500/20 to-orange-600/20 hover:from-orange-500/30 hover:to-orange-600/30 border-orange-300/50' },
+                { value: 'tutoría', label: 'Tutoría', icon: '🎓', color: 'from-purple-500/20 to-purple-600/20 hover:from-purple-500/30 hover:to-purple-600/30 border-purple-300/50' },
+                { value: 'otro', label: 'Otro', icon: '📌', color: 'from-gray-500/20 to-gray-600/20 hover:from-gray-500/30 hover:to-gray-600/30 border-gray-300/50' }
+              ].map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setFormData({ ...formData, type: option.value as any });
+                    setShowTypeSelection(false);
+                    setShowModal(true);
+                  }}
+                  className={`w-full p-4 rounded-lg border-2 transition-all text-left bg-gradient-to-r ${option.color} font-semibold hover:shadow-lg group`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{option.icon}</span>
+                    <div className="flex-1">
+                      <p className="font-bold text-foreground">{option.label}</p>
+                      <p className="text-xs text-muted-foreground/70 mt-0.5">
+                        {option.value === 'reunion' && 'Reuniones con padres, docentes o directivos'}
+                        {option.value === 'cita' && 'Citas con asesores o especialistas'}
+                        {option.value === 'tarea' && 'Entrega de tareas y trabajos académicos'}
+                        {option.value === 'tutoría' && 'Sesiones de tutoría o asesoramiento'}
+                        {option.value === 'otro' && 'Otros eventos importantes'}
+                      </p>
+                    </div>
+                    <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal - Evento Detallado */}
+      {showModal && !showTypeSelection && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+              <div>
+                <h2 className="font-bold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'} {getTypeLabel(formData.type)}</h2>
+                <p className="text-xs text-muted-foreground/70">Completa los detalles del evento</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setValidationErrors([]);
+                }}
                 className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
               >
                 <X className="w-5 h-5" />
@@ -381,105 +501,82 @@ export default function Calendario() {
 
             {/* Contenido */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold text-foreground block mb-1.5">Título*</label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Ej: Reunión"
-                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
-                  />
+              {/* Errores de validación */}
+              {validationErrors.length > 0 && (
+                <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg space-y-1">
+                  {validationErrors.map((error, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm text-destructive">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                      <span>{error}</span>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-foreground block mb-1.5">Tipo</label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) => {
-                      setFormData({ ...formData, type: e.target.value as any });
-                      setShowTutoringSection(e.target.value === 'tutoría');
-                    }}
-                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
-                  >
-                    <option value="reunion">Reunión</option>
-                    <option value="cita">Cita</option>
-                    <option value="tarea">Tarea</option>
-                    <option value="tutoría">Tutoría</option>
-                    <option value="otro">Otro</option>
-                  </select>
+              )}
+
+              {/* Fecha seleccionada */}
+              {selectedDate && (
+                <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-foreground">
+                  <strong className="block text-xs text-muted-foreground/70 mb-1">📅 Fecha Seleccionada</strong>
+                  <p className="font-semibold">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
+              )}
+
+              <div>
+                <label className="text-sm font-semibold text-foreground block mb-2">Título del Evento*</label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ej: Reunión con Padres"
+                  maxLength={100}
+                  className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                />
+                <p className="text-xs text-muted-foreground/60 mt-1">{formData.title.length}/100 caracteres</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-1.5">Hora*</label>
+                  <label className="text-sm font-semibold text-foreground block mb-2">Hora*</label>
                   <input
                     type="time"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-1.5">Ubicación</label>
+                  <label className="text-sm font-semibold text-foreground block mb-2">Ubicación</label>
                   <input
                     type="text"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="Ej: Aula 101"
-                    className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                    placeholder="Ej: Aula 101, Virtual"
+                    className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-1.5">Participantes</label>
+                <label className="text-sm font-semibold text-foreground block mb-2">Participantes</label>
                 <input
                   type="text"
                   value={formData.attendees}
                   onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
-                  placeholder="Separados por comas"
-                  className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  placeholder="Ej: Prof. García, Director López (separados por comas)"
+                  className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-1.5">Descripción</label>
+                <label className="text-sm font-semibold text-foreground block mb-2">Descripción</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Detalles..."
-                  className="w-full px-3 py-1.5 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
-                  rows={2}
+                  placeholder="Detalles adicionales..."
+                  className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all resize-none"
+                  rows={3}
                 />
               </div>
-
-              {showTutoringSection && (
-                <div className="p-4 rounded-lg bg-purple-50 border border-purple-200 space-y-3">
-                  <h3 className="font-semibold text-sm text-purple-900">Detalles de Tutoría</h3>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-purple-700/80 font-medium">Materia</p>
-                      <p className="text-purple-600 text-xs mt-1">Se especifica en participantes</p>
-                    </div>
-                    <div>
-                      <p className="text-purple-700/80 font-medium">Nivel</p>
-                      <p className="text-purple-600 text-xs mt-1">Individual o grupal</p>
-                    </div>
-                  </div>
-                  <div className="text-xs text-purple-600 p-2 bg-purple-100/50 rounded">
-                    Recuerda incluir el docente tutor y el tema a tratar en los campos anteriores.
-                  </div>
-                </div>
-              )}
-
-              {selectedDate && (
-                <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-foreground">
-                  <strong className="block text-xs text-muted-foreground/70 mb-1">Fecha Seleccionada</strong>
-                  {selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}
-                </div>
-              )}
             </div>
 
             {/* Footer */}
@@ -488,7 +585,7 @@ export default function Calendario() {
                 {selectedEvent && (
                   <button
                     onClick={() => handleDeleteEvent(selectedEvent.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-destructive/30 text-destructive rounded-lg hover:bg-destructive/10 transition-all font-medium"
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm border border-destructive/30 text-destructive rounded-lg hover:bg-destructive/10 transition-all font-medium"
                   >
                     <Trash2 className="w-4 h-4" />
                     Eliminar
@@ -497,17 +594,19 @@ export default function Calendario() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-1.5 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium text-foreground"
+                  onClick={() => {
+                    setShowModal(false);
+                    setValidationErrors([]);
+                  }}
+                  className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium text-foreground"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveEvent}
-                  disabled={!formData.title || !formData.time}
-                  className="px-4 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
-                  {selectedEvent ? 'Guardar' : 'Crear'}
+                  {selectedEvent ? '💾 Guardar Cambios' : '✓ Crear Evento'}
                 </button>
               </div>
             </div>
@@ -515,132 +614,7 @@ export default function Calendario() {
         </div>
       )}
 
-      {/* Modal - Agendar Tutoría */}
-      {showTutoringModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-purple-500/10 to-purple-400/5 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
-              <div>
-                <h2 className="font-bold text-lg text-foreground">Agendar Tutoría</h2>
-                <p className="text-xs text-muted-foreground/70">Selecciona un tutor o profesor</p>
-              </div>
-              <button
-                onClick={() => setShowTutoringModal(false)}
-                className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            {/* Contenido */}
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Tipo de Persona</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { value: 'tutor', label: 'Tutor' },
-                    { value: 'profesor', label: 'Profesor' },
-                    { value: 'director', label: 'Director' }
-                  ].map(option => (
-                    <button
-                      key={option.value}
-                      onClick={() => setTutoringData({ ...tutoringData, type: option.value as any })}
-                      className={`px-3 py-2 rounded-lg font-medium text-sm transition-all border ${
-                        tutoringData.type === option.value
-                          ? 'bg-purple-600 text-white border-purple-600 shadow-md'
-                          : 'bg-muted/50 text-foreground border-border/30 hover:border-purple-300'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Nombre del {
-                  tutoringData.type === 'tutor' ? 'Tutor' :
-                  tutoringData.type === 'profesor' ? 'Profesor' : 'Director'
-                } *</label>
-                <input
-                  type="text"
-                  value={tutoringData.tutor}
-                  onChange={(e) => setTutoringData({ ...tutoringData, tutor: e.target.value })}
-                  placeholder="Ej: Prof. García"
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Materia/Tema *</label>
-                <input
-                  type="text"
-                  value={tutoringData.subject}
-                  onChange={(e) => setTutoringData({ ...tutoringData, subject: e.target.value })}
-                  placeholder="Ej: Matemáticas"
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Fecha *</label>
-                  <input
-                    type="date"
-                    value={tutoringData.date}
-                    onChange={(e) => setTutoringData({ ...tutoringData, date: e.target.value })}
-                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Hora *</label>
-                  <input
-                    type="time"
-                    value={tutoringData.time}
-                    onChange={(e) => setTutoringData({ ...tutoringData, time: e.target.value })}
-                    className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Notas adicionales</label>
-                <textarea
-                  value={tutoringData.notes}
-                  onChange={(e) => setTutoringData({ ...tutoringData, notes: e.target.value })}
-                  placeholder="Temas a tratar, objetivos, etc..."
-                  className="w-full px-3 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-purple-400/40 focus:border-transparent transition-all resize-none"
-                  rows={3}
-                />
-              </div>
-
-              <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                <p className="text-xs text-purple-700">
-                  La tutoría se agregará a tu calendario como un evento especial que puedes editar después.
-                </p>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="border-t border-border/30 bg-muted/20 px-6 py-3 flex gap-2 justify-end flex-shrink-0">
-              <button
-                onClick={() => setShowTutoringModal(false)}
-                className="px-4 py-1.5 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium text-foreground"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveTutoring}
-                disabled={!tutoringData.date || !tutoringData.time || !tutoringData.tutor || !tutoringData.subject}
-                className="px-4 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Agendar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
