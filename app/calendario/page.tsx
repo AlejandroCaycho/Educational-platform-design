@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, MapPin, User, Trash2, Edit2, AlertCircle, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, MapPin, User, Trash2, Edit2, AlertCircle, CheckCircle, Users, Calendar, FileText, BookOpen } from 'lucide-react';
 
 interface Event {
   id: string;
@@ -224,6 +224,16 @@ export default function Calendario() {
     }
   };
 
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'reunion': return <Users className="w-5 h-5" />;
+      case 'cita': return <Calendar className="w-5 h-5" />;
+      case 'tarea': return <FileText className="w-5 h-5" />;
+      case 'tutoría': return <BookOpen className="w-5 h-5" />;
+      default: return <Clock className="w-5 h-5" />;
+    }
+  };
+
   const daysInMonth = getDaysInMonth(currentDate);
   const firstDay = getFirstDayOfMonth(currentDate);
   const days = [];
@@ -350,7 +360,12 @@ export default function Calendario() {
 
         {/* Sidebar - Resumen de Eventos */}
         <div className="w-full md:w-96 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm h-full flex flex-col overflow-hidden">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex-shrink-0">Próximos Eventos</h3>
+          <div className="flex items-center gap-3 mb-4 flex-shrink-0">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Clock className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">Próximos Eventos</h3>
+          </div>
           <div className="flex-1 overflow-y-auto space-y-2">
             {eventos.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground/60">
@@ -365,13 +380,20 @@ export default function Calendario() {
                     onClick={(e) => handleEventClick(event, e)}
                     className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-md group ${getTypeColor(event.type)} ${isEventPassed ? 'opacity-60' : ''}`}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <span className="text-xs font-bold">{getTypeLabel(event.type)}</span>
-                      <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Edit2 className="w-3 h-3" />
-                      </span>
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="text-sm flex-shrink-0 mt-0.5">
+                        {getTypeIcon(event.type)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-1 mb-0.5">
+                          <span className="text-xs font-bold">{getTypeLabel(event.type)}</span>
+                          <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Edit2 className="w-3 h-3" />
+                          </span>
+                        </div>
+                        <p className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</p>
+                      </div>
                     </div>
-                    <p className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</p>
                     <div className="space-y-1 text-xs">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3 flex-shrink-0" />
@@ -422,11 +444,11 @@ export default function Calendario() {
             {/* Contenido */}
             <div className="flex-1 px-6 py-4 space-y-2">
               {[
-                { value: 'reunion', label: 'Reunión' },
-                { value: 'cita', label: 'Cita' },
-                { value: 'tarea', label: 'Tarea' },
-                { value: 'tutoría', label: 'Tutoría' },
-                { value: 'otro', label: 'Otro' }
+                { value: 'reunion', label: 'Reunión', desc: 'Reuniones con padres o docentes' },
+                { value: 'cita', label: 'Cita', desc: 'Citas con asesores o especialistas' },
+                { value: 'tarea', label: 'Tarea', desc: 'Entrega de tareas académicas' },
+                { value: 'tutoría', label: 'Tutoría', desc: 'Sesiones de tutoría' },
+                { value: 'otro', label: 'Otro', desc: 'Otros eventos importantes' }
               ].map(option => (
                 <button
                   key={option.value}
@@ -435,9 +457,21 @@ export default function Calendario() {
                     setShowTypeSelection(false);
                     setShowModal(true);
                   }}
-                  className="w-full p-3 rounded-lg border border-border/50 transition-all text-left hover:bg-muted/50 hover:border-primary/50 group"
+                  className="w-full p-4 rounded-lg border border-border/50 transition-all text-left hover:bg-muted/50 hover:border-primary/50 hover:shadow-md group"
                 >
-                  <p className="font-medium text-foreground">{option.label}</p>
+                  <div className="flex items-start gap-3">
+                    <div className="text-muted-foreground group-hover:text-primary transition-colors mt-0.5">
+                      {option.value === 'reunion' && <Users className="w-5 h-5" />}
+                      {option.value === 'cita' && <Calendar className="w-5 h-5" />}
+                      {option.value === 'tarea' && <FileText className="w-5 h-5" />}
+                      {option.value === 'tutoría' && <BookOpen className="w-5 h-5" />}
+                      {option.value === 'otro' && <Clock className="w-5 h-5" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground">{option.label}</p>
+                      <p className="text-xs text-muted-foreground/70">{option.desc}</p>
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -451,9 +485,14 @@ export default function Calendario() {
           <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
             <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
-              <div>
-                <h2 className="font-semibold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'} Evento</h2>
-                <p className="text-xs text-muted-foreground">Completa los detalles</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
+                  {getTypeIcon(formData.type)}
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'} {getTypeLabel(formData.type)}</h2>
+                  <p className="text-xs text-muted-foreground">Completa los detalles del evento</p>
+                </div>
               </div>
               <button
                 onClick={() => {
@@ -489,7 +528,10 @@ export default function Calendario() {
               )}
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Título del Evento*</label>
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  Título del Evento*
+                </label>
                 <input
                   type="text"
                   value={formData.title}
@@ -503,7 +545,10 @@ export default function Calendario() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Hora*</label>
+                  <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    Hora*
+                  </label>
                   <input
                     type="time"
                     value={formData.time}
@@ -512,7 +557,10 @@ export default function Calendario() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-foreground block mb-2">Ubicación</label>
+                  <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    Ubicación
+                  </label>
                   <input
                     type="text"
                     value={formData.location}
@@ -524,7 +572,10 @@ export default function Calendario() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Participantes</label>
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-muted-foreground" />
+                  Participantes
+                </label>
                 <input
                   type="text"
                   value={formData.attendees}
@@ -535,7 +586,10 @@ export default function Calendario() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground block mb-2">Descripción</label>
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  Descripción
+                </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
