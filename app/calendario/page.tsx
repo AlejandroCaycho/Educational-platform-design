@@ -360,8 +360,8 @@ export default function Calendario() {
                   className={`relative p-2 rounded-lg border transition-all group ${
                     day
                       ? isPassed 
-                        ? 'border-border/20 bg-muted/20 cursor-not-allowed opacity-50'
-                        : 'border-border/50 hover:border-primary/70 cursor-pointer hover:bg-primary/5 hover:shadow-md'
+                        ? 'border-border/20 bg-muted/10 cursor-not-allowed opacity-50'
+                        : 'border-border/30 hover:border-border/60 cursor-pointer hover:bg-muted/40'
                       : 'border-transparent'
                   } ${
                     selectedDate &&
@@ -369,14 +369,14 @@ export default function Calendario() {
                     selectedDate.getDate() === day &&
                     selectedDate.getMonth() === currentDate.getMonth() &&
                     selectedDate.getFullYear() === currentDate.getFullYear()
-                      ? 'bg-primary/15 border-primary/70 shadow-lg'
-                      : 'bg-background/50'
+                      ? 'bg-foreground/5 border-border/60'
+                      : 'bg-background/30'
                   }`}
                   title={isPassed && day ? 'Fecha pasada - no editable' : ''}
                 >
                   {day && (
                     <>
-                      <div className={`font-bold text-xs mb-1 ${isPassed ? 'text-muted-foreground/50' : 'text-foreground'}`}>
+                      <div className={`font-semibold text-xs mb-1 ${isPassed ? 'text-muted-foreground/40' : 'text-foreground/80'}`}>
                         {day}
                       </div>
                       <div className="space-y-0.5 max-h-16 overflow-y-auto">
@@ -385,14 +385,14 @@ export default function Calendario() {
                             <button
                               key={event.id}
                               onClick={(e) => handleEventClick(event, e)}
-                              className={`w-full text-left text-xs px-1.5 py-0.5 rounded border cursor-pointer hover:opacity-90 transition-opacity truncate font-semibold ${getTypeColor(event.type)}`}
+                              className="w-full text-left text-xs px-1.5 py-0.5 rounded border border-border/40 bg-background/50 hover:bg-background/80 cursor-pointer hover:border-border/70 transition-all truncate font-medium text-foreground/70 hover:text-foreground"
                               title={`${event.time} - ${event.title}`}
                             >
-                              <span className="inline-block w-10 font-mono">{event.time}</span>
+                              <span className="inline-block w-10 font-mono text-muted-foreground/60">{event.time}</span>
                             </button>
                           ))
                         ) : (
-                          <div className="text-xs text-muted-foreground/40 text-center py-1">-</div>
+                          <div className="text-xs text-muted-foreground/20 text-center py-1">-</div>
                         )}
                       </div>
                     </>
@@ -423,40 +423,48 @@ export default function Calendario() {
                   <button
                     key={event.id}
                     onClick={(e) => handleEventClick(event, e)}
-                    className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-md group ${getTypeColor(event.type)} ${isEventPassed ? 'opacity-60' : ''}`}
+                    className="w-full text-left p-4 rounded-lg border border-border/40 bg-background/40 hover:bg-background/80 transition-all hover:border-border/80 group"
                   >
-                    <div className="flex items-start gap-2 mb-2">
-                      <div className="text-sm flex-shrink-0 mt-0.5">
-                        {getTypeIcon(event.type)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-1 mb-0.5">
-                          <span className="text-xs font-bold">{getTypeLabel(event.type)}</span>
-                          <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Edit2 className="w-3 h-3" />
-                          </span>
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className="text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0 mt-1">
+                          {getTypeIcon(event.type)}
                         </div>
-                        <p className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm text-foreground leading-tight line-clamp-2">{event.title}</p>
+                          <p className="text-xs text-muted-foreground/70 mt-1.5">{getTypeLabel(event.type)}</p>
+                        </div>
                       </div>
+                      <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                        <Edit2 className="w-4 h-4 text-muted-foreground" />
+                      </span>
                     </div>
-                    <div className="space-y-1 text-xs">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 flex-shrink-0" />
-                        <span>{event.date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })} • {event.time}</span>
+                    
+                    <div className="space-y-1.5 text-xs text-muted-foreground/80 ml-8">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-muted-foreground/60">{event.time}</span>
+                        <span className="text-muted-foreground/40">•</span>
+                        <span>{event.date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}</span>
                       </div>
                       {event.location && (
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3 flex-shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3 h-3 flex-shrink-0 text-muted-foreground/60" />
                           <span className="truncate">{event.location}</span>
                         </div>
                       )}
                       {event.attendees.length > 0 && (
-                        <div className="flex items-center gap-1">
-                          <User className="w-3 h-3 flex-shrink-0" />
-                          <span className="truncate">{event.attendees.slice(0, 1).join(', ')}{event.attendees.length > 1 ? `+${event.attendees.length - 1}` : ''}</span>
+                        <div className="flex items-center gap-2">
+                          <User className="w-3 h-3 flex-shrink-0 text-muted-foreground/60" />
+                          <span className="truncate text-xs">{event.attendees.slice(0, 2).join(', ')}{event.attendees.length > 2 ? ` +${event.attendees.length - 2}` : ''}</span>
                         </div>
                       )}
                     </div>
+                    
+                    {isEventPassed && (
+                      <div className="mt-2 ml-8 pt-2 border-t border-border/20">
+                        <span className="text-xs text-muted-foreground/50 font-medium">Completado</span>
+                      </div>
+                    )}
                   </button>
                 );
               })
