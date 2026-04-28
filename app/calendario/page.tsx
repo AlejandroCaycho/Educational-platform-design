@@ -473,7 +473,7 @@ export default function Calendario() {
             <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
               <div>
                 <h2 className="font-semibold text-lg text-foreground">Tipo de Evento</h2>
-                <p className="text-xs text-muted-foreground">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                <p className="text-xs text-muted-foreground">Elige qué tipo de evento crear</p>
               </div>
               <button
                 onClick={() => {
