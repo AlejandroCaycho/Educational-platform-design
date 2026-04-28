@@ -242,24 +242,22 @@ export default function Calendario() {
       {/* Header */}
       <div className="px-5 md:px-6 py-4 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">📅 Mi Calendario</h1>
+          <h1 className="text-2xl font-bold text-foreground">Calendario</h1>
           <p className="text-xs text-muted-foreground">Gestiona tus eventos, citas y reuniones</p>
         </div>
-        <div>
-          <button
-            onClick={() => {
-              setValidationErrors([]);
-              setShowTypeSelection(false);
-              setSelectedDate(null);
-              setSelectedEvent(null);
-              setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
-            }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all shadow-lg font-semibold whitespace-nowrap text-sm hover:shadow-xl hover:scale-105"
-          >
-            <Plus className="w-4 h-4" />
-            Crear Evento
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            setValidationErrors([]);
+            setShowTypeSelection(false);
+            setSelectedDate(null);
+            setSelectedEvent(null);
+            setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
+          }}
+          className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all text-sm font-medium shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Nuevo Evento
+        </button>
       </div>
 
       <div className="flex-1 flex gap-4 p-5 md:p-6">
@@ -323,9 +321,8 @@ export default function Calendario() {
                 >
                   {day && (
                     <>
-                      <div className={`font-bold text-xs mb-1 flex items-center gap-1 ${isPassed ? 'text-muted-foreground/50' : 'text-foreground'}`}>
+                      <div className={`font-bold text-xs mb-1 ${isPassed ? 'text-muted-foreground/50' : 'text-foreground'}`}>
                         {day}
-                        {isPassed && <span className="text-xs">✓</span>}
                       </div>
                       <div className="space-y-0.5 max-h-16 overflow-y-auto">
                         {dayEvents.length > 0 ? (
@@ -351,20 +348,13 @@ export default function Calendario() {
           </div>
         </div>
 
-        {/* Sidebar - Resumen de Reuniones */}
-        <div className="w-full md:w-96 bg-gradient-to-br from-blue-50 to-blue-50/50 dark:from-blue-950/30 dark:to-blue-950/20 rounded-2xl border border-blue-200/50 dark:border-blue-800/50 p-5 shadow-lg h-full flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2 mb-4 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Clock className="w-4 h-4 text-white" />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">Resumen de Eventos</h3>
-          </div>
-          <div className="flex-1 overflow-y-auto space-y-2.5">
+        {/* Sidebar - Resumen de Eventos */}
+        <div className="w-full md:w-96 bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm h-full flex flex-col overflow-hidden">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex-shrink-0">Próximos Eventos</h3>
+          <div className="flex-1 overflow-y-auto space-y-2">
             {eventos.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground/60">
-                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-blue-400/50" />
-                <p className="text-sm font-medium">Sin eventos</p>
-                <p className="text-xs mt-1">Selecciona un día para crear uno</p>
+              <div className="text-center py-8 text-muted-foreground/60">
+                <p className="text-sm">Sin eventos</p>
               </div>
             ) : (
               eventos.sort((a, b) => a.date.getTime() - b.date.getTime()).map(event => {
@@ -373,39 +363,30 @@ export default function Calendario() {
                   <button
                     key={event.id}
                     onClick={(e) => handleEventClick(event, e)}
-                    className={`w-full text-left p-3.5 rounded-xl border-2 transition-all hover:shadow-lg group relative overflow-hidden ${
-                      getTypeColor(event.type)
-                    } ${isEventPassed ? 'opacity-60' : ''}`}
+                    className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-md group ${getTypeColor(event.type)} ${isEventPassed ? 'opacity-60' : ''}`}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/5 group-hover:to-white/10 transition-all pointer-events-none" />
-                    <div className="relative flex items-start justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-white/80 dark:bg-white/10">
-                          {getTypeLabel(event.type)}
-                        </span>
-                        {isEventPassed && <span className="text-xs opacity-70">✓ Pasado</span>}
-                      </div>
-                      <Edit2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <span className="text-xs font-bold">{getTypeLabel(event.type)}</span>
+                      <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Edit2 className="w-3 h-3" />
+                      </span>
                     </div>
-                    <p className="font-bold text-sm mb-2.5 line-clamp-2 text-foreground">{event.title}</p>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span className="font-medium">{event.date.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' })} • {event.time}</span>
+                    <p className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 flex-shrink-0" />
+                        <span>{event.date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })} • {event.time}</span>
                       </div>
                       {event.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3 flex-shrink-0" />
                           <span className="truncate">{event.location}</span>
                         </div>
                       )}
                       {event.attendees.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <User className="w-3.5 h-3.5 flex-shrink-0" />
-                          <span className="truncate text-xs">
-                            {event.attendees.slice(0, 2).join(', ')}
-                            {event.attendees.length > 2 ? ` +${event.attendees.length - 2}` : ''}
-                          </span>
+                        <div className="flex items-center gap-1">
+                          <User className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">{event.attendees.slice(0, 1).join(', ')}{event.attendees.length > 1 ? `+${event.attendees.length - 1}` : ''}</span>
                         </div>
                       )}
                     </div>
@@ -422,10 +403,10 @@ export default function Calendario() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+            <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="font-bold text-lg text-foreground">Tipo de Evento</h2>
-                <p className="text-xs text-muted-foreground/70">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                <h2 className="font-semibold text-lg text-foreground">Tipo de Evento</h2>
+                <p className="text-xs text-muted-foreground">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
               </div>
               <button
                 onClick={() => {
@@ -439,14 +420,13 @@ export default function Calendario() {
             </div>
 
             {/* Contenido */}
-            <div className="flex-1 px-6 py-5 space-y-3">
-              <p className="text-sm text-muted-foreground mb-4">Selecciona el tipo de evento que deseas crear:</p>
+            <div className="flex-1 px-6 py-4 space-y-2">
               {[
-                { value: 'reunion', label: 'Reunión', icon: '👥', color: 'from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 border-blue-300/50' },
-                { value: 'cita', label: 'Cita', icon: '📅', color: 'from-green-500/20 to-green-600/20 hover:from-green-500/30 hover:to-green-600/30 border-green-300/50' },
-                { value: 'tarea', label: 'Tarea', icon: '✓', color: 'from-orange-500/20 to-orange-600/20 hover:from-orange-500/30 hover:to-orange-600/30 border-orange-300/50' },
-                { value: 'tutoría', label: 'Tutoría', icon: '🎓', color: 'from-purple-500/20 to-purple-600/20 hover:from-purple-500/30 hover:to-purple-600/30 border-purple-300/50' },
-                { value: 'otro', label: 'Otro', icon: '📌', color: 'from-gray-500/20 to-gray-600/20 hover:from-gray-500/30 hover:to-gray-600/30 border-gray-300/50' }
+                { value: 'reunion', label: 'Reunión' },
+                { value: 'cita', label: 'Cita' },
+                { value: 'tarea', label: 'Tarea' },
+                { value: 'tutoría', label: 'Tutoría' },
+                { value: 'otro', label: 'Otro' }
               ].map(option => (
                 <button
                   key={option.value}
@@ -455,22 +435,9 @@ export default function Calendario() {
                     setShowTypeSelection(false);
                     setShowModal(true);
                   }}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left bg-gradient-to-r ${option.color} font-semibold hover:shadow-lg group`}
+                  className="w-full p-3 rounded-lg border border-border/50 transition-all text-left hover:bg-muted/50 hover:border-primary/50 group"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{option.icon}</span>
-                    <div className="flex-1">
-                      <p className="font-bold text-foreground">{option.label}</p>
-                      <p className="text-xs text-muted-foreground/70 mt-0.5">
-                        {option.value === 'reunion' && 'Reuniones con padres, docentes o directivos'}
-                        {option.value === 'cita' && 'Citas con asesores o especialistas'}
-                        {option.value === 'tarea' && 'Entrega de tareas y trabajos académicos'}
-                        {option.value === 'tutoría' && 'Sesiones de tutoría o asesoramiento'}
-                        {option.value === 'otro' && 'Otros eventos importantes'}
-                      </p>
-                    </div>
-                    <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
+                  <p className="font-medium text-foreground">{option.label}</p>
                 </button>
               ))}
             </div>
@@ -483,10 +450,10 @@ export default function Calendario() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+            <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="font-bold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'} {getTypeLabel(formData.type)}</h2>
-                <p className="text-xs text-muted-foreground/70">Completa los detalles del evento</p>
+                <h2 className="font-semibold text-lg text-foreground">{selectedEvent ? 'Editar' : 'Nuevo'} Evento</h2>
+                <p className="text-xs text-muted-foreground">Completa los detalles</p>
               </div>
               <button
                 onClick={() => {
@@ -515,9 +482,9 @@ export default function Calendario() {
 
               {/* Fecha seleccionada */}
               {selectedDate && (
-                <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-foreground">
-                  <strong className="block text-xs text-muted-foreground/70 mb-1">📅 Fecha Seleccionada</strong>
-                  <p className="font-semibold">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                <div className="p-3 bg-muted/30 rounded-lg border border-border/50 text-sm text-foreground">
+                  <strong className="block text-xs text-muted-foreground/70 mb-1">Fecha Seleccionada</strong>
+                  <p className="font-medium">{selectedDate.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                 </div>
               )}
 
@@ -604,9 +571,9 @@ export default function Calendario() {
                 </button>
                 <button
                   onClick={handleSaveEvent}
-                  className="px-6 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  className="px-6 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
-                  {selectedEvent ? '💾 Guardar Cambios' : '✓ Crear Evento'}
+                  {selectedEvent ? 'Guardar Cambios' : 'Crear Evento'}
                 </button>
               </div>
             </div>
