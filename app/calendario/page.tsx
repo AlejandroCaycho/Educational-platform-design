@@ -14,6 +14,28 @@ interface Event {
   attendees: string[];
 }
 
+interface Participant {
+  id: string;
+  name: string;
+  role: 'tutor' | 'profesor' | 'directivo' | 'alumno' | 'padre';
+}
+
+const participantesData: Participant[] = [
+  { id: '1', name: 'Prof. García', role: 'profesor' },
+  { id: '2', name: 'Prof. Morales', role: 'profesor' },
+  { id: '3', name: 'Prof. López', role: 'profesor' },
+  { id: '4', name: 'Tutor Ruiz', role: 'tutor' },
+  { id: '5', name: 'Tutor Pérez', role: 'tutor' },
+  { id: '6', name: 'Director González', role: 'directivo' },
+  { id: '7', name: 'Directora Martínez', role: 'directivo' },
+  { id: '8', name: 'Juan Gómez', role: 'alumno' },
+  { id: '9', name: 'María Sánchez', role: 'alumno' },
+  { id: '10', name: 'Carlos López', role: 'alumno' },
+  { id: '11', name: 'Padre Gómez', role: 'padre' },
+  { id: '12', name: 'Madre Sánchez', role: 'padre' },
+  { id: '13', name: 'Asesor López', role: 'tutor' }
+];
+
 const eventosData: Event[] = [
   {
     id: '1',
@@ -62,6 +84,10 @@ export default function Calendario() {
     attendees: ''
   });
   const [showTypeSelection, setShowTypeSelection] = useState(false);
+  const [showDateSelection, setShowDateSelection] = useState(false);
+  const [showParticipantSelection, setShowParticipantSelection] = useState(false);
+  const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
+  const [participantFilter, setParticipantFilter] = useState<Participant['role'] | 'all'>('all');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const getDaysInMonth = (date: Date) => {
@@ -181,7 +207,7 @@ export default function Calendario() {
         time: formData.time,
         location: formData.location,
         type: formData.type,
-        attendees: formData.attendees.split(',').map(a => a.trim()).filter(a => a)
+        attendees: selectedParticipants.length > 0 ? selectedParticipants : formData.attendees.split(',').map(a => a.trim()).filter(a => a)
       }]);
     }
     setShowModal(false);
@@ -234,6 +260,22 @@ export default function Calendario() {
     }
   };
 
+  const getFilteredParticipants = () => {
+    if (participantFilter === 'all') return participantesData;
+    return participantesData.filter(p => p.role === participantFilter);
+  };
+
+  const getRoleName = (role: string) => {
+    const roleNames: Record<string, string> = {
+      tutor: 'Tutores',
+      profesor: 'Profesores',
+      directivo: 'Directivos',
+      alumno: 'Alumnos',
+      padre: 'Padres'
+    };
+    return roleNames[role] || role;
+  };
+
   const daysInMonth = getDaysInMonth(currentDate);
   const firstDay = getFirstDayOfMonth(currentDate);
   const days = [];
@@ -258,9 +300,12 @@ export default function Calendario() {
         <button
           onClick={() => {
             setValidationErrors([]);
-            setShowTypeSelection(false);
+            setShowTypeSelection(true);
+            setShowDateSelection(false);
+            setShowModal(false);
             setSelectedDate(null);
             setSelectedEvent(null);
+            setSelectedParticipants([]);
             setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
           }}
           className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all text-sm font-medium shadow-sm"
@@ -421,7 +466,7 @@ export default function Calendario() {
       </div>
 
       {/* Modal - Selector de Tipo de Evento */}
-      {showTypeSelection && selectedDate && (
+      {showTypeSelection && !selectedDate && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
@@ -455,7 +500,7 @@ export default function Calendario() {
                   onClick={() => {
                     setFormData({ ...formData, type: option.value as any });
                     setShowTypeSelection(false);
-                    setShowModal(true);
+                    setShowDateSelection(true);
                   }}
                   className="w-full p-4 rounded-lg border border-border/50 transition-all text-left hover:bg-muted/50 hover:border-primary/50 hover:shadow-md group"
                 >
@@ -479,8 +524,100 @@ export default function Calendario() {
         </div>
       )}
 
+      {/* Modal - Selector de Fecha */}
+      {showDateSelection && !selectedDate && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-lg w-full overflow-hidden flex flex-col shadow-2xl">
+            {/* Header */}
+            <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Calendar className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg text-foreground">Selecciona una Fecha</h2>
+                  <p className="text-xs text-muted-foreground">Elige cuándo ocurrirá el evento</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDateSelection(false);
+                  setShowTypeSelection(true);
+                  setFormData({ title: '', description: '', time: '', location: '', type: 'reunion', attendees: '' });
+                }}
+                className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Contenido - Mini Calendario */}
+            <div className="flex-1 overflow-y-auto px-6 py-6">
+              {/* Header del Calendario */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-foreground capitalize">
+                  {currentDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                </h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handlePrevMonth}
+                    className="p-2 hover:bg-muted/50 rounded-lg transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-foreground" />
+                  </button>
+                  <button
+                    onClick={handleNextMonth}
+                    className="p-2 hover:bg-muted/50 rounded-lg transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5 text-foreground" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Días de semana */}
+              <div className="grid grid-cols-7 gap-2 mb-4">
+                {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+                  <div key={day} className="text-center font-semibold text-muted-foreground/70 text-xs py-2">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Días del mes */}
+              <div className="grid grid-cols-7 gap-2">
+                {days.map((day, index) => {
+                  const dateForDay = day ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day) : null;
+                  const isPassed = dateForDay && isDatePassed(dateForDay);
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        if (day && !isPassed) {
+                          setSelectedDate(dateForDay);
+                          setShowDateSelection(false);
+                          setShowModal(true);
+                        }
+                      }}
+                      disabled={!day || isPassed}
+                      className={`p-2 rounded-lg border transition-all text-center text-sm font-medium ${
+                        day && !isPassed
+                          ? 'border-border/50 hover:border-primary/70 cursor-pointer hover:bg-primary/5 hover:shadow-md'
+                          : 'border-transparent text-muted-foreground/30 cursor-not-allowed'
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal - Evento Detallado */}
-      {showModal && !showTypeSelection && (
+      {showModal && !showTypeSelection && !showDateSelection && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
             {/* Header */}
@@ -572,16 +709,44 @@ export default function Calendario() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  Participantes
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    Participantes ({selectedParticipants.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowParticipantSelection(true)}
+                    className="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-all font-medium"
+                  >
+                    Seleccionar
+                  </button>
+                </div>
+                {selectedParticipants.length > 0 ? (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {selectedParticipants.map(participant => (
+                      <div
+                        key={participant}
+                        className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-medium flex items-center gap-2"
+                      >
+                        <span>{participant}</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedParticipants(selectedParticipants.filter(p => p !== participant))}
+                          className="hover:text-destructive transition-colors"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-xs text-muted-foreground/60 mb-2">No hay participantes seleccionados</div>
+                )}
                 <input
-                  type="text"
-                  value={formData.attendees}
+                  type="hidden"
+                  value={selectedParticipants.join(', ')}
                   onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
-                  placeholder="Ej: Prof. García, Director López (separados por comas)"
-                  className="w-full px-4 py-2 bg-muted/50 border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
 
@@ -635,6 +800,110 @@ export default function Calendario() {
         </div>
       )}
 
+      {/* Modal - Selección de Participantes */}
+      {showParticipantSelection && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
+            {/* Header */}
+            <div className="bg-muted/30 border-b border-border/30 px-6 py-4 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Users className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg text-foreground">Seleccionar Participantes</h2>
+                  <p className="text-xs text-muted-foreground">Filtra por tipo de persona</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowParticipantSelection(false);
+                  setParticipantFilter('all');
+                }}
+                className="p-2 hover:bg-muted/50 rounded-lg transition-all text-muted-foreground hover:text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Filtros */}
+            <div className="border-b border-border/30 px-6 py-3 flex-shrink-0">
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                <button
+                  onClick={() => setParticipantFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                    participantFilter === 'all'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted/50 text-foreground hover:bg-muted'
+                  }`}
+                >
+                  Todos
+                </button>
+                {(['tutor', 'profesor', 'directivo', 'alumno', 'padre'] as const).map(role => (
+                  <button
+                    key={role}
+                    onClick={() => setParticipantFilter(role)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${
+                      participantFilter === role
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted/50 text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    {getRoleName(role)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Lista de Participantes */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+              {getFilteredParticipants().map(participant => (
+                <button
+                  key={participant.id}
+                  onClick={() => {
+                    const isSelected = selectedParticipants.includes(participant.name);
+                    if (isSelected) {
+                      setSelectedParticipants(selectedParticipants.filter(p => p !== participant.name));
+                    } else {
+                      setSelectedParticipants([...selectedParticipants, participant.name]);
+                    }
+                  }}
+                  className={`w-full p-3 rounded-lg border transition-all text-left flex items-center gap-3 ${
+                    selectedParticipants.includes(participant.name)
+                      ? 'bg-primary/10 border-primary/50 text-foreground'
+                      : 'bg-muted/30 border-border/50 text-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center text-xs font-bold ${
+                    selectedParticipants.includes(participant.name)
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border/50'
+                  }`}>
+                    {selectedParticipants.includes(participant.name) && '✓'}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{participant.name}</p>
+                    <p className="text-xs text-muted-foreground/70 capitalize">{getRoleName(participant.role)}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-border/30 bg-muted/20 px-6 py-3 flex gap-2 justify-end flex-shrink-0">
+              <button
+                onClick={() => {
+                  setShowParticipantSelection(false);
+                  setParticipantFilter('all');
+                }}
+                className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors font-medium text-foreground"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
