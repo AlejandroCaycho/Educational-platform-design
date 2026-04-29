@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Users, Plus, Edit2, Trash2, Search, Mail, Shield, Calendar, LogOut, MoreVertical, Filter } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Search, Mail, Shield, Calendar, LogOut, Users2, GraduationCap } from 'lucide-react';
 
 const usuariosData = [
   { id: 1, nombre: 'Familia García López', email: 'garcia@example.com', rol: 'Padre', estudiante: 'Carlos Mendoza', estado: 'Activo', fecha: '15/01/2024' },
@@ -11,16 +11,17 @@ const usuariosData = [
   { id: 5, nombre: 'Prof. Juan Morales', email: 'juan@school.com', rol: 'Docente', estudiante: '5to Primaria B', estado: 'Inactivo', fecha: '05/02/2024' },
 ];
 
-function getRoleIcon(rol: string) {
+function RoleIcon({ rol }: { rol: string }) {
+  const iconClass = 'w-5 h-5 text-muted-foreground';
   switch (rol) {
     case 'Padre':
-      return '👨‍👩‍👧';
+      return <Users2 className={iconClass} />;
     case 'Docente':
-      return '👨‍🏫';
+      return <GraduationCap className={iconClass} />;
     case 'Administrador':
-      return '🛡️';
+      return <Shield className={iconClass} />;
     default:
-      return '👤';
+      return <Users className={iconClass} />;
   }
 }
 
@@ -212,7 +213,9 @@ export default function Usuarios() {
                   <div className="flex items-center justify-between">
                     {/* User Info */}
                     <div className="flex items-center gap-4 flex-1">
-                      <div className="text-2xl">{getRoleIcon(usuario.rol)}</div>
+                      <div className="p-2 bg-muted/40 rounded-lg">
+                        <RoleIcon rol={usuario.rol} />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold text-foreground text-sm truncate">{usuario.nombre}</h3>
