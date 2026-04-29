@@ -40,210 +40,238 @@ export default function Configuracion() {
   };
 
   return (
-    <div className="p-6 md:p-8 h-screen flex flex-col">
+    <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="mb-4">
+      <div className="px-8 pt-6 pb-4 border-b border-border/40">
         <h1 className="text-2xl font-bold text-foreground">Configuración</h1>
-        <p className="text-xs text-muted-foreground">Administra tu cuenta y preferencias</p>
+        <p className="text-sm text-muted-foreground mt-1">Administra tu perfil y preferencias</p>
       </div>
 
-
-
-      {/* Main Grid Layout - Compact */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 flex-1 overflow-hidden">
-        {/* Left Column - Personal Info */}
-        <div className="lg:col-span-1 space-y-3 overflow-y-auto pr-2">
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Perfil
-            </h3>
-            <div className="space-y-2">
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto px-8 py-8 space-y-8">
+          
+          {/* Sección: Perfil */}
+          <section>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                </div>
+                Información Personal
+              </h2>
+            </div>
+            <div className="bg-card border border-border/40 rounded-xl p-6 space-y-5">
               <div>
-                <label className="block text-xs font-medium text-foreground/80 mb-1">Nombre</label>
+                <label className="block text-sm font-semibold text-foreground mb-2">Nombre Completo</label>
                 <input
                   type="text"
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleChange}
-                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full px-3 py-2.5 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-foreground/80 mb-1">Email</label>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-background border border-border rounded">
-                  <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="flex-1 bg-transparent text-sm text-foreground focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-foreground/80 mb-1">Teléfono</label>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-background border border-border rounded">
-                  <Phone className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Teléfono</label>
                   <input
                     type="tel"
                     name="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
-                    className="flex-1 bg-transparent text-sm text-foreground focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Security */}
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              Seguridad
-            </h3>
-            <button className="w-full px-2.5 py-1.5 bg-background border border-border rounded text-foreground hover:bg-muted transition-colors text-xs font-medium">
-              Cambiar Contraseña
-            </button>
-          </div>
-
-          {/* Account Info */}
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <h3 className="text-xs font-semibold text-foreground/70 mb-2">Cuenta</h3>
-            <div className="space-y-1.5 text-xs text-muted-foreground/70">
-              <p>ID: FAM-2024-001</p>
-              <p>Desde: Enero 2024</p>
-              <p>Actualizado: Hoy</p>
+          {/* Sección: Estudiante */}
+          <section>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground">Información del Estudiante</h2>
             </div>
-          </div>
-        </div>
+            <div className="bg-card border border-border/40 rounded-xl p-6 space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Estudiante</label>
+                  <select
+                    name="estudiante"
+                    value={formData.estudiante}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2.5 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  >
+                    <option>Carlos Mendoza</option>
+                    <option>Santiago Mendoza</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Relación</label>
+                  <select
+                    name="relacion"
+                    value={formData.relacion}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2.5 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
+                  >
+                    <option>Padre</option>
+                    <option>Madre</option>
+                    <option>Tutor</option>
+                    <option>Apoderado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </section>
 
-        {/* Middle Column - Student Info */}
-        <div className="lg:col-span-1 overflow-y-auto pr-2">
-          <div className="bg-card p-4 rounded-lg border border-border h-fit">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Estudiante</h3>
-            <div className="space-y-2">
+          {/* Sección: Notificaciones */}
+          <section>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <Bell className="w-5 h-5 text-muted-foreground" />
+                </div>
+                Notificaciones
+              </h2>
+            </div>
+            <div className="bg-card border border-border/40 rounded-xl p-6 space-y-6">
               <div>
-                <label className="block text-xs font-medium text-foreground/80 mb-1">Estudiante</label>
-                <select
-                  name="estudiante"
-                  value={formData.estudiante}
-                  onChange={handleChange}
-                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                >
-                  <option>Carlos Mendoza</option>
-                  <option>Santiago Mendoza</option>
-                </select>
+                <h3 className="text-sm font-semibold text-foreground mb-4">Canales de Notificación</h3>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="notificacionesEmail"
+                      checked={formData.notificacionesEmail}
+                      onChange={handleChange}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">Notificaciones por Email</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="notificacionesSMS"
+                      checked={formData.notificacionesSMS}
+                      onChange={handleChange}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">Notificaciones por SMS</span>
+                  </label>
+                </div>
               </div>
+
+              <div className="border-t border-border/20" />
+
               <div>
-                <label className="block text-xs font-medium text-foreground/80 mb-1">Relación</label>
-                <select
-                  name="relacion"
-                  value={formData.relacion}
-                  onChange={handleChange}
-                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                >
-                  <option>Padre</option>
-                  <option>Madre</option>
-                  <option>Tutor</option>
-                  <option>Apoderado</option>
-                </select>
+                <h3 className="text-sm font-semibold text-foreground mb-4">Tipos de Notificación</h3>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="notificacionesAsistencia"
+                      checked={formData.notificacionesAsistencia}
+                      onChange={handleChange}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">Cambios de Asistencia</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="notificacionesCalificaciones"
+                      checked={formData.notificacionesCalificaciones}
+                      onChange={handleChange}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">Nuevas Calificaciones</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      name="notificacionesIncidencias"
+                      checked={formData.notificacionesIncidencias}
+                      onChange={handleChange}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">Incidencias Reportadas</span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Right Columns - Notifications */}
-        <div className="lg:col-span-2 overflow-y-auto pr-2">
-          <div className="bg-card p-4 rounded-lg border border-border h-fit">
-            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Bell className="w-4 h-4" />
-              Notificaciones
-            </h3>
-            
-            {/* Channels */}
-            <div className="mb-4 pb-3 border-b border-border/30">
-              <p className="text-xs font-medium text-foreground mb-2">Canales</p>
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesEmail"
-                    checked={formData.notificacionesEmail}
-                    onChange={handleChange}
-                    className="w-3 h-3 accent-primary"
-                  />
-                  <span className="text-xs text-foreground">Email</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesSMS"
-                    checked={formData.notificacionesSMS}
-                    onChange={handleChange}
-                    className="w-3 h-3 accent-primary"
-                  />
-                  <span className="text-xs text-foreground">SMS</span>
-                </label>
-              </div>
+          {/* Sección: Seguridad */}
+          <section>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <Lock className="w-5 h-5 text-muted-foreground" />
+                </div>
+                Seguridad
+              </h2>
             </div>
+            <div className="bg-card border border-border/40 rounded-xl p-6">
+              <button className="px-4 py-2.5 border border-border/40 rounded-lg text-foreground hover:bg-muted transition-colors text-sm font-medium">
+                Cambiar Contraseña
+              </button>
+            </div>
+          </section>
 
-            {/* Types */}
-            <div>
-              <p className="text-xs font-medium text-foreground mb-2">Tipos</p>
-              <div className="space-y-1.5">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesAsistencia"
-                    checked={formData.notificacionesAsistencia}
-                    onChange={handleChange}
-                    className="w-3 h-3 accent-primary"
-                  />
-                  <span className="text-xs text-foreground">Asistencia</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesCalificaciones"
-                    checked={formData.notificacionesCalificaciones}
-                    onChange={handleChange}
-                    className="w-3 h-3 accent-primary"
-                  />
-                  <span className="text-xs text-foreground">Calificaciones</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesIncidencias"
-                    checked={formData.notificacionesIncidencias}
-                    onChange={handleChange}
-                    className="w-3 h-3 accent-primary"
-                  />
-                  <span className="text-xs text-foreground">Incidencias</span>
-                </label>
+          {/* Sección: Información de Cuenta */}
+          <section className="pb-6">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-foreground">Información de Cuenta</h2>
+            </div>
+            <div className="bg-card border border-border/40 rounded-xl p-6">
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide mb-1">ID de Cuenta</p>
+                  <p className="text-sm text-foreground font-medium">FAM-2024-001</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide mb-1">Miembro Desde</p>
+                  <p className="text-sm text-foreground font-medium">Enero 2024</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wide mb-1">Última Actualización</p>
+                  <p className="text-sm text-foreground font-medium">Hoy</p>
+                </div>
               </div>
             </div>
-          </div>
+          </section>
+
         </div>
       </div>
 
-      {/* Save Button - Compact */}
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border/30">
-        {saved ? (
-          <span className="text-xs text-green-600 font-medium">Guardado exitosamente</span>
-        ) : (
-          <span className="text-xs text-muted-foreground/60">Los cambios se guardarán automáticamente</span>
-        )}
-        <button
-          onClick={handleSave}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded hover:bg-primary/5 transition-colors"
-        >
-          <Save className="w-3.5 h-3.5" />
-          Guardar
-        </button>
+      {/* Footer - Save Button */}
+      <div className="border-t border-border/40 bg-background/80 backdrop-blur-sm px-8 py-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div>
+            {saved ? (
+              <span className="text-sm text-green-600 font-medium">Configuración guardada correctamente</span>
+            ) : (
+              <span className="text-sm text-muted-foreground/70">Haz clic para guardar los cambios</span>
+            )}
+          </div>
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm shadow-sm"
+          >
+            <Save className="w-4 h-4" />
+            Guardar Cambios
+          </button>
+        </div>
       </div>
     </div>
   );
