@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Settings, Save, Bell, Lock, User, Mail, Phone } from 'lucide-react';
+import { Settings, Save, User, Building2, Bell, Palette, Clock } from 'lucide-react';
 
-export default function Configuracion() {
-  const [formData, setFormData] = useState({
+export default function ConfiguracionPage() {
+  const [perfil, setPerfil] = useState({
     nombre: 'García López',
     email: 'familia@example.com',
     telefono: '+34 612 345 678',
@@ -17,224 +17,339 @@ export default function Configuracion() {
     notificacionesIncidencias: true,
   });
 
+  const [institucion, setInstitucion] = useState({
+    tema_primario: '#1A73E8',
+    tema_secundario: '#34A853',
+    horario_inicio: '07:30',
+    horario_fin: '15:00',
+    permitir_registro_padres: true,
+    padres_ven_calificaciones: true,
+    padres_ven_asistencia: true,
+    padres_ven_tareas: true,
+  });
+
   const [saved, setSaved] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChangeProfile = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
-      setFormData(prev => ({
+      setPerfil(prev => ({
         ...prev,
         [name]: (e.target as HTMLInputElement).checked
       }));
     } else {
-      setFormData(prev => ({
+      setPerfil(prev => ({
         ...prev,
         [name]: value
       }));
     }
   };
 
+  const handleChangeInst = (field: string, value: any) => {
+    setInstitucion({ ...institucion, [field]: value } as any);
+  };
+
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
-    console.log('Configuración guardada:', formData);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Configuración</h1>
-        <p className="text-muted-foreground">Administra tu cuenta y preferencias</p>
+      <div className="px-8 py-4 border-b border-border/40">
+        <h1 className="text-2xl font-bold text-foreground">Configuración</h1>
       </div>
 
-      {/* Success Message */}
-      {saved && (
-        <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-lg">
-          Configuración guardada correctamente
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Profile Section */}
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
-              Información Personal
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Nombre Completo</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Content - 2 Column Layout */}
+      <div className="flex-1 overflow-hidden px-8 py-6">
+        <div className="grid grid-cols-2 gap-6 h-full">
+          {/* Column 1: Perfil Personal */}
+          <div className="space-y-4 overflow-y-auto pr-2">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3">Información Personal</h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">Email</label>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-lg">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
+                  <label className="block text-xs font-semibold text-foreground mb-2">Nombre Completo</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={perfil.nombre}
+                    onChange={handleChangeProfile}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={perfil.email}
+                    onChange={handleChangeProfile}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Teléfono</label>
+                  <input
+                    type="tel"
+                    name="telefono"
+                    value={perfil.telefono}
+                    onChange={handleChangeProfile}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3">Estudiante Asignado</h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Estudiante</label>
+                  <select
+                    name="estudiante"
+                    value={perfil.estudiante}
+                    onChange={handleChangeProfile}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  >
+                    <option>Carlos Mendoza</option>
+                    <option>Santiago Mendoza</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Relación</label>
+                  <select
+                    name="relacion"
+                    value={perfil.relacion}
+                    onChange={handleChangeProfile}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  >
+                    <option>Padre</option>
+                    <option>Madre</option>
+                    <option>Tutor</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3">Seguridad</h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5">
+                <button className="w-full px-4 py-2.5 border border-border/40 rounded-lg text-foreground hover:bg-muted transition-colors font-medium text-sm">
+                  Cambiar Contraseña
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Notificaciones e Institución */}
+          <div className="space-y-4 overflow-y-auto pr-2">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Bell className="w-5 h-5" />
+                Mis Notificaciones
+              </h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-3">Canales</p>
+                  <div className="space-y-2.5">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="notificacionesEmail"
+                        checked={perfil.notificacionesEmail}
+                        onChange={handleChangeProfile}
+                        className="w-4 h-4 accent-primary rounded"
+                      />
+                      <span className="text-sm text-foreground">Email</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="notificacionesSMS"
+                        checked={perfil.notificacionesSMS}
+                        onChange={handleChangeProfile}
+                        className="w-4 h-4 accent-primary rounded"
+                      />
+                      <span className="text-sm text-foreground">SMS</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="border-t border-border/20 pt-4">
+                  <p className="text-xs font-semibold text-foreground mb-3">Tipos</p>
+                  <div className="space-y-2.5">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="notificacionesAsistencia"
+                        checked={perfil.notificacionesAsistencia}
+                        onChange={handleChangeProfile}
+                        className="w-4 h-4 accent-primary rounded"
+                      />
+                      <span className="text-sm text-foreground">Asistencia</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="notificacionesCalificaciones"
+                        checked={perfil.notificacionesCalificaciones}
+                        onChange={handleChangeProfile}
+                        className="w-4 h-4 accent-primary rounded"
+                      />
+                      <span className="text-sm text-foreground">Calificaciones</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="notificacionesIncidencias"
+                        checked={perfil.notificacionesIncidencias}
+                        onChange={handleChangeProfile}
+                        className="w-4 h-4 accent-primary rounded"
+                      />
+                      <span className="text-sm text-foreground">Incidencias</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Palette className="w-5 h-5" />
+                Tema del Sistema
+              </h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Color Primario</label>
+                  <div className="flex gap-2">
                     <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="flex-1 bg-transparent text-foreground focus:outline-none"
+                      type="color"
+                      value={institucion.tema_primario}
+                      onChange={(e) => handleChangeInst('tema_primario', e.target.value)}
+                      className="w-12 h-10 rounded cursor-pointer border border-border/40"
+                    />
+                    <input
+                      type="text"
+                      value={institucion.tema_primario}
+                      onChange={(e) => handleChangeInst('tema_primario', e.target.value)}
+                      className="flex-1 px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">Teléfono</label>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-lg">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
+                  <label className="block text-xs font-semibold text-foreground mb-2">Color Secundario</label>
+                  <div className="flex gap-2">
                     <input
-                      type="tel"
-                      name="telefono"
-                      value={formData.telefono}
-                      onChange={handleChange}
-                      className="flex-1 bg-transparent text-foreground focus:outline-none"
+                      type="color"
+                      value={institucion.tema_secundario}
+                      onChange={(e) => handleChangeInst('tema_secundario', e.target.value)}
+                      className="w-12 h-10 rounded cursor-pointer border border-border/40"
+                    />
+                    <input
+                      type="text"
+                      value={institucion.tema_secundario}
+                      onChange={(e) => handleChangeInst('tema_secundario', e.target.value)}
+                      className="flex-1 px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Student Section */}
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <h2 className="text-xl font-bold text-foreground mb-4">Información del Estudiante</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Estudiante</label>
-                <select
-                  name="estudiante"
-                  value={formData.estudiante}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option>Carlos Mendoza</option>
-                  <option>Santiago Mendoza</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Relación</label>
-                <select
-                  name="relacion"
-                  value={formData.relacion}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option>Padre</option>
-                  <option>Madre</option>
-                  <option>Tutor</option>
-                  <option>Apoderado</option>
-                </select>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Horario Escolar
+              </h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Inicio</label>
+                  <input
+                    type="time"
+                    value={institucion.horario_inicio}
+                    onChange={(e) => handleChangeInst('horario_inicio', e.target.value)}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-2">Fin</label>
+                  <input
+                    type="time"
+                    value={institucion.horario_fin}
+                    onChange={(e) => handleChangeInst('horario_fin', e.target.value)}
+                    className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Notifications Section */}
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-primary" />
-              Preferencias de Notificaciones
-            </h2>
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-foreground mb-3">Canales de Notificación</p>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Building2 className="w-5 h-5" />
+                Permisos de Padres
+              </h2>
+              <div className="bg-card border border-border/40 rounded-lg p-5 space-y-2.5">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="notificacionesEmail"
-                    checked={formData.notificacionesEmail}
-                    onChange={handleChange}
-                    className="w-4 h-4 accent-primary"
+                    checked={institucion.permitir_registro_padres}
+                    onChange={(e) => handleChangeInst('permitir_registro_padres', e.target.checked)}
+                    className="w-4 h-4 accent-primary rounded"
                   />
-                  <span className="text-foreground">Notificaciones por Email</span>
+                  <span className="text-sm text-foreground">Permitir registro</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="notificacionesSMS"
-                    checked={formData.notificacionesSMS}
-                    onChange={handleChange}
-                    className="w-4 h-4 accent-primary"
+                    checked={institucion.padres_ven_calificaciones}
+                    onChange={(e) => handleChangeInst('padres_ven_calificaciones', e.target.checked)}
+                    className="w-4 h-4 accent-primary rounded"
                   />
-                  <span className="text-foreground">Notificaciones por SMS</span>
-                </label>
-              </div>
-
-              <div className="border-t border-border pt-4 space-y-3">
-                <p className="text-sm font-semibold text-foreground mb-3">Tipos de Notificación</p>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="notificacionesAsistencia"
-                    checked={formData.notificacionesAsistencia}
-                    onChange={handleChange}
-                    className="w-4 h-4 accent-primary"
-                  />
-                  <span className="text-foreground">Cambios de Asistencia</span>
+                  <span className="text-sm text-foreground">Ver calificaciones</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="notificacionesCalificaciones"
-                    checked={formData.notificacionesCalificaciones}
-                    onChange={handleChange}
-                    className="w-4 h-4 accent-primary"
+                    checked={institucion.padres_ven_asistencia}
+                    onChange={(e) => handleChangeInst('padres_ven_asistencia', e.target.checked)}
+                    className="w-4 h-4 accent-primary rounded"
                   />
-                  <span className="text-foreground">Nuevas Calificaciones</span>
+                  <span className="text-sm text-foreground">Ver asistencia</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    name="notificacionesIncidencias"
-                    checked={formData.notificacionesIncidencias}
-                    onChange={handleChange}
-                    className="w-4 h-4 accent-primary"
+                    checked={institucion.padres_ven_tareas}
+                    onChange={(e) => handleChangeInst('padres_ven_tareas', e.target.checked)}
+                    className="w-4 h-4 accent-primary rounded"
                   />
-                  <span className="text-foreground">Incidencias Reportadas</span>
+                  <span className="text-sm text-foreground">Ver tareas</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Save Button */}
+      {/* Footer - Save Button */}
+      <div className="border-t border-border/40 bg-background/80 px-8 py-3">
+        <div className="flex items-center justify-between">
+          <div>
+            {saved ? (
+              <span className="text-sm text-green-600 font-semibold">Configuración guardada</span>
+            ) : (
+              <span className="text-sm text-muted-foreground/70">Haz clic para guardar los cambios</span>
+            )}
+          </div>
           <button
             onClick={handleSave}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold sticky top-24"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm"
           >
-            <Save className="w-5 h-5" />
-            Guardar Cambios
+            <Save className="w-4 h-4" />
+            Guardar
           </button>
-
-          {/* Security Section */}
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-primary" />
-              Seguridad
-            </h3>
-            <button className="w-full px-4 py-2 bg-background border border-border rounded-lg text-foreground hover:bg-muted transition-colors text-sm font-semibold">
-              Cambiar Contraseña
-            </button>
-          </div>
-
-          {/* Account Info */}
-          <div className="bg-card p-6 rounded-lg border border-border text-sm space-y-2">
-            <p className="text-muted-foreground">ID de Cuenta: FAM-2024-001</p>
-            <p className="text-muted-foreground">Miembro desde: Enero 2024</p>
-            <p className="text-muted-foreground">Última actualización: Hoy</p>
-          </div>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
-  GraduationCap, Bell
+  GraduationCap, Bell, Building2, Shield
 } from 'lucide-react';
 import { Toaster } from './ui/toaster';
 
@@ -20,6 +20,9 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
     { icon: FileText, label: 'Reportes', href: '/reportes' },
     { icon: Users, label: 'Usuarios', href: '/usuarios' },
     { icon: Settings, label: 'Configuración', href: '/configuracion' },
+    // Admin Section
+    { icon: Building2, label: 'Instituciones', href: '/instituciones' },
+    { icon: Shield, label: 'Acceso', href: '/acceso' },
   ];
 
   const handleToggle = () => {
