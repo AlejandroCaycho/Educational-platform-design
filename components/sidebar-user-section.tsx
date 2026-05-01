@@ -49,24 +49,16 @@ export function SidebarUserSection({
 
   return (
     <div
-      className={`relative px-3 py-4 border-t flex-shrink-0 transition-all duration-300 ${
+      className={`relative px-3 py-4 border-t border-sidebar-border flex-shrink-0 transition-all duration-300 bg-sidebar-accent/20 ${
         collapsed ? 'flex items-center justify-center' : ''
       }`}
       ref={menuRef}
-      style={{
-        borderColor: 'rgba(167, 139, 250, 0.2)',
-        background: 'linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(99, 102, 241, 0.06) 100%)'
-      }}
     >
       <button
         onClick={() => setMenuOpen(!menuOpen)}
-        className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group border text-white ${collapsed ? 'justify-center' : ''}`}
-        style={{
-          background: menuOpen 
-            ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(99, 102, 241, 0.35) 100%)'
-            : 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(99, 102, 241, 0.15) 100%)',
-          borderColor: menuOpen ? 'rgba(167, 139, 250, 0.6)' : 'rgba(167, 139, 250, 0.3)'
-        }}
+        className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200 group border text-sidebar-foreground hover:text-sidebar-primary ${
+          menuOpen ? 'bg-sidebar-accent/40 border-sidebar-accent' : 'bg-sidebar-accent/20 border-sidebar-border hover:border-sidebar-accent'
+        } ${collapsed ? 'justify-center' : ''}`}
         aria-expanded={menuOpen}
         aria-label="Menú de usuario"
       >
