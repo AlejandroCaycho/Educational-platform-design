@@ -54,11 +54,12 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
       >
         {/* Header con Logo Dinámico */}
         <div 
-          className={`flex flex-col lg:flex-row lg:items-center px-3 py-4 border-b border-sidebar-border bg-sidebar flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}
+          className={`flex items-center px-3 py-4 border-b border-sidebar-border bg-sidebar flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : 'justify-between'}`}
         >
-          <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />
+          {!isCollapsed && <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />}
+          {isCollapsed && <div className="lg:hidden"><SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} /></div>}
 
-          <div className={`flex gap-2.5 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'} mt-2 lg:mt-0`}>
+          <div className={`flex gap-2.5 flex-shrink-0 ${isCollapsed ? 'flex-col lg:flex-col' : 'flex-row'} ${isCollapsed ? '' : 'ml-auto'}`}>
             <button
               className="p-2.5 rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground hover:bg-sidebar-accent group border border-sidebar-border hover:border-sidebar-accent"
               title="Notificaciones"
