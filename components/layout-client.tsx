@@ -48,25 +48,25 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
       )}
 
       <aside
-        className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-gradient-to-b from-sidebar to-sidebar/95 dark:from-sidebar dark:to-sidebar/90 border-r border-sidebar-border shadow-lg transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
+        className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-gradient-to-b from-sidebar via-sidebar to-sidebar/98 dark:from-sidebar dark:via-sidebar dark:to-slate-950/95 border-r border-sidebar-border/60 shadow-xl transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}
       >
         {/* Header con Logo Dinámico */}
-        <div className={`flex flex-col lg:flex-row lg:items-center px-3 py-3 border-b border-sidebar-border flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
+        <div className={`flex flex-col lg:flex-row lg:items-center px-3 py-3 border-b border-sidebar-border/50 bg-gradient-to-r from-sidebar via-sidebar to-sidebar/95 dark:from-sidebar dark:via-sidebar/95 dark:to-slate-950/90 flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
           <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />
 
-          <div className={`flex gap-2 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'} mt-2 lg:mt-0`}>
+          <div className={`flex gap-2.5 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'} mt-2 lg:mt-0`}>
             <button
-              className="p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground group"
+              className="p-2 hover:bg-sidebar-accent/60 active:bg-sidebar-accent/80 rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground group border border-sidebar-accent/20 hover:border-sidebar-accent/40"
               title="Notificaciones"
               aria-label="Notificaciones"
             >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-destructive rounded-full animate-pulse"></span>
+              <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-lg"></span>
             </button>
             <button
-              className="p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg transition-all duration-200 text-sidebar-foreground flex items-center justify-center"
+              className="p-2 hover:bg-sidebar-accent/60 active:bg-sidebar-accent/80 rounded-lg transition-all duration-200 text-sidebar-foreground flex items-center justify-center border border-sidebar-accent/20 hover:border-sidebar-accent/40"
               onClick={handleToggle}
               title={isCollapsed ? 'Expandir' : 'Colapsar'}
               aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
@@ -77,7 +77,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
         </div>
 
         {/* Menu de Navegación */}
-        <nav className={`p-4 space-y-2 flex-1 overflow-y-auto transition-all duration-300 ${isCollapsed ? 'lg:p-2' : ''}`}>
+        <nav className={`px-3 py-4 space-y-1.5 flex-1 overflow-y-auto transition-all duration-300 ${isCollapsed ? 'lg:px-2' : ''}`}>
           {menuItems.map((item) => {
             const isActive = pathname === item.href
             return (
@@ -85,17 +85,17 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 group relative overflow-hidden ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 group relative overflow-hidden border ${
                   isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md scale-105'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                } ${isCollapsed ? 'lg:justify-center lg:px-2 lg:py-2.5' : ''}`}
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg scale-105 border-sidebar-primary/60'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent/40 border-transparent hover:border-sidebar-accent/40'
+                } ${isCollapsed ? 'lg:justify-center lg:px-2.5 lg:py-2.5' : ''}`}
               >
-                {/* Fondo de hover mejorado */}
+                {/* Efecto shine animado en hover */}
                 {!isActive && (
-                  <div className="absolute inset-0 bg-sidebar-accent/0 group-hover:bg-sidebar-accent/50 transition-all duration-300 -z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/0 to-transparent group-hover:via-white/10 transition-all duration-500 -z-10" />
                 )}
-                <item.icon className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" />
+                <item.icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${isActive ? 'scale-115' : 'group-hover:scale-110'}`} />
                 {!isCollapsed && <span className="truncate">{item.label}</span>}
               </Link>
             )
