@@ -35,7 +35,7 @@ export default function Usuarios() {
   const [usuarios, setUsuarios] = useState(usuariosData);
   const [searchTerm, setSearchTerm] = useState('');
   const [filtroRol, setFiltroRol] = useState('todos');
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [newUser, setNewUser] = useState({
     nombre: '',
     email: '',
@@ -63,7 +63,7 @@ export default function Usuarios() {
       };
       setUsuarios([...usuarios, usuario]);
       setNewUser({ nombre: '', email: '', rol: 'Padre', estudiante: '' });
-      setShowForm(false);
+      setShowModal(false);
     }
   };
 
@@ -78,13 +78,13 @@ export default function Usuarios() {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="px-8 py-5 border-b border-border/40 flex items-center justify-between">
+      <div className="px-8 py-4 border-b border-border/40 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Gestión de Usuarios</h1>
           <p className="text-sm text-muted-foreground mt-1">Administra cuentas y permisos de acceso</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => setShowModal(true)}
           className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm"
         >
           <Plus className="w-4 h-4" />
@@ -92,83 +92,164 @@ export default function Usuarios() {
         </button>
       </div>
 
-      {/* Stats Row */}
-      <div className="px-8 py-4 border-b border-border/40 flex-shrink-0">
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Total</p>
-            <p className="text-2xl font-bold text-foreground">{usuarios.length}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">usuarios registrados</p>
+      {/* Content - 3 Column Layout */}
+      <div className="flex-1 overflow-hidden px-8 py-6">
+        <div className="grid grid-cols-3 gap-6 h-full">
+          {/* Column 1: Stats y Búsqueda */}
+          <div className="space-y-4 overflow-y-auto pr-2">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-3">Estadísticas</h3>
+              <div className="space-y-3">
+                <div className="bg-card border border-border/40 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Total Usuarios</p>
+                  <p className="text-3xl font-bold text-foreground">{usuarios.length}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">en el sistema</p>
+                </div>
+                <div className="bg-card border border-border/40 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    Activos
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">{totalActivos}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">{Math.round((totalActivos/usuarios.length)*100)}% del total</p>
+                </div>
+                <div className="bg-card border border-border/40 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Docentes</p>
+                  <p className="text-3xl font-bold text-foreground">{totalDocentes}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">registrados</p>
+                </div>
+                <div className="bg-card border border-border/40 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Padres</p>
+                  <p className="text-3xl font-bold text-foreground">{totalPadres}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">en la plataforma</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-3">Filtros</h3>
+              <div className="bg-card border border-border/40 rounded-lg p-4 space-y-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+                  <input
+                    type="text"
+                    placeholder="Buscar usuario..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <select
+                  value={filtroRol}
+                  onChange={(e) => setFiltroRol(e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  <option value="todos">Todos los roles</option>
+                  <option value="Padre">Padres</option>
+                  <option value="Docente">Docentes</option>
+                  <option value="Administrador">Administradores</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>
-              Activos
-            </p>
-            <p className="text-2xl font-bold text-foreground">{totalActivos}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">{Math.round((totalActivos/usuarios.length)*100)}% de usuarios</p>
-          </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Docentes</p>
-            <p className="text-2xl font-bold text-foreground">{totalDocentes}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">cuentas activas</p>
-          </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Padres</p>
-            <p className="text-2xl font-bold text-foreground">{totalPadres}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">en el sistema</p>
+
+          {/* Column 2 & 3: Users List */}
+          <div className="col-span-2 overflow-y-auto pr-2">
+            {usuariosFiltrados.length > 0 ? (
+              <div className="space-y-2.5">
+                {usuariosFiltrados.map(usuario => (
+                  <div
+                    key={usuario.id}
+                    className="bg-card border border-border/40 rounded-lg p-4 hover:border-border/60 hover:shadow-sm transition-all group"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Icon + Info */}
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="p-2 bg-muted/40 rounded-lg flex-shrink-0">
+                          <RoleIcon rol={usuario.rol} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-foreground text-sm truncate">{usuario.nombre}</h3>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap ${getStatusBadge(usuario.estado)}`}>
+                              {usuario.estado}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground/70">
+                            <span className="flex items-center gap-1 truncate">
+                              <Mail className="w-3 h-3 flex-shrink-0" />
+                              {usuario.email}
+                            </span>
+                            <span className="flex items-center gap-1 flex-shrink-0">
+                              <Calendar className="w-3 h-3" />
+                              {usuario.fecha}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Role + Asignación */}
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs text-muted-foreground/60 mb-1">{usuario.rol}</p>
+                        <p className="text-sm font-medium text-foreground max-w-[120px] truncate">{usuario.estudiante}</p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                        <button className="p-2 hover:bg-muted rounded-lg transition-colors text-primary">
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground">
+                          <LogOut className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(usuario.id)}
+                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive/70 hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                  <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-muted-foreground/60 text-sm">No se encontraron usuarios</p>
+                  <p className="text-muted-foreground/40 text-xs mt-1">Intenta con otros criterios de búsqueda</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="px-8 py-3 border-b border-border/40 flex-shrink-0 flex gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-          <input
-            type="text"
-            placeholder="Buscar por nombre, email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 bg-muted/40 border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-        </div>
-        <select
-          value={filtroRol}
-          onChange={(e) => setFiltroRol(e.target.value)}
-          className="px-3 py-2 bg-muted/40 border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 flex items-center gap-2"
-        >
-          <option value="todos">Todos los roles</option>
-          <option value="Padre">Padres</option>
-          <option value="Docente">Docentes</option>
-          <option value="Administrador">Administradores</option>
-        </select>
-      </div>
-
-      {/* Add Form */}
-      {showForm && (
-        <div className="px-8 py-4 border-b border-border/40 bg-muted/20">
-          <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Crear Nuevo Usuario</h3>
-            <div className="grid grid-cols-4 gap-3">
+      {/* Modal Agregar Usuario */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card border border-border/40 rounded-lg p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Crear Nuevo Usuario</h2>
+            <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Nombre completo"
                 value={newUser.nombre}
                 onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={newUser.email}
                 onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <select
                 value={newUser.rol}
                 onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
               >
                 <option value="Padre">Padre/Madre</option>
                 <option value="Docente">Docente</option>
@@ -179,12 +260,12 @@ export default function Usuarios() {
                 placeholder="Asociación (Ej: 5to Primaria A)"
                 value={newUser.estudiante}
                 onChange={(e) => setNewUser({ ...newUser, estudiante: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-2 justify-end mt-6">
               <button
-                onClick={() => setShowForm(false)}
+                onClick={() => setShowModal(false)}
                 className="px-4 py-2 bg-muted/50 text-foreground rounded-lg hover:bg-muted transition-colors font-medium text-sm border border-border/40"
               >
                 Cancelar
@@ -193,89 +274,12 @@ export default function Usuarios() {
                 onClick={handleAddUser}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm"
               >
-                Agregar Usuario
+                Agregar
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Users Grid/List */}
-      <div className="flex-1 overflow-hidden px-8 py-4">
-        <div className="h-full overflow-y-auto">
-          {usuariosFiltrados.length > 0 ? (
-            <div className="space-y-2.5">
-              {usuariosFiltrados.map(usuario => (
-                <div
-                  key={usuario.id}
-                  className="bg-card border border-border/40 rounded-lg p-4 hover:border-border/60 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-center justify-between">
-                    {/* User Info */}
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="p-2 bg-muted/40 rounded-lg">
-                        <RoleIcon rol={usuario.rol} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-foreground text-sm truncate">{usuario.nombre}</h3>
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusBadge(usuario.estado)}`}>
-                            {usuario.estado}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
-                          <span className="flex items-center gap-1">
-                            <Mail className="w-3 h-3" />
-                            {usuario.email}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Shield className="w-3 h-3" />
-                            {usuario.rol}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {usuario.fecha}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Assignment */}
-                    <div className="text-right mr-6">
-                      <p className="text-xs text-muted-foreground/60 mb-1">Asignación</p>
-                      <p className="text-sm font-medium text-foreground">{usuario.estudiante}</p>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 hover:bg-muted rounded-lg transition-colors text-primary">
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground">
-                        <LogOut className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteUser(usuario.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive/70 hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground/60 text-sm">No se encontraron usuarios</p>
-                <p className="text-muted-foreground/40 text-xs mt-1">Intenta con otros criterios de búsqueda</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
