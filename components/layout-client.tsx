@@ -54,13 +54,13 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
       >
         {/* Header con Logo Dinámico */}
         <div 
-          className={`flex flex-col lg:flex-row lg:items-center px-3 py-4 border-b border-sidebar-border bg-[#2a1d4a] flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}
+          className={`flex flex-col lg:flex-row lg:items-center px-3 py-4 border-b border-sidebar-border bg-sidebar flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}
         >
           <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />
 
           <div className={`flex gap-2.5 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'} mt-2 lg:mt-0`}>
             <button
-              className="p-2.5 rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground hover:text-white bg-sidebar-accent/20 hover:bg-sidebar-accent/40 group border border-sidebar-border hover:border-sidebar-accent"
+              className="p-2.5 rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground hover:bg-sidebar-accent group border border-sidebar-border hover:border-sidebar-accent"
               title="Notificaciones"
               aria-label="Notificaciones"
             >
@@ -68,7 +68,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-lg"></span>
             </button>
             <button
-              className="p-2.5 rounded-lg transition-all duration-200 text-sidebar-foreground hover:text-white bg-sidebar-accent/20 hover:bg-sidebar-accent/40 flex items-center justify-center border border-sidebar-border hover:border-sidebar-accent"
+              className="p-2.5 rounded-lg transition-all duration-200 text-sidebar-foreground hover:bg-sidebar-accent flex items-center justify-center border border-sidebar-border hover:border-sidebar-accent"
               onClick={handleToggle}
               title={isCollapsed ? 'Expandir' : 'Colapsar'}
               aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
