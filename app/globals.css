@@ -29,13 +29,13 @@
   --chart-4: oklch(0.62 0.22 20);
   --chart-5: oklch(0.55 0.19 45);
   --radius: 0.5rem;
-  --sidebar: oklch(0.96 0.01 240);
+  --sidebar: oklch(0.95 0.02 240);
   --sidebar-foreground: oklch(0.15 0.02 240);
   --sidebar-primary: oklch(0.5 0.18 260);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.6 0.2 130);
+  --sidebar-accent: oklch(0.85 0.08 260);
   --sidebar-accent-foreground: oklch(0.15 0.02 240);
-  --sidebar-border: oklch(0.9 0.01 240);
+  --sidebar-border: oklch(0.88 0.01 240);
   --sidebar-ring: oklch(0.5 0.18 260);
 }
 
@@ -64,13 +64,13 @@
   --chart-3: oklch(0.63 0.19 235);
   --chart-4: oklch(0.72 0.2 20);
   --chart-5: oklch(0.65 0.2 45);
-  --sidebar: oklch(0.15 0.02 240);
+  --sidebar: oklch(0.16 0.02 240);
   --sidebar-foreground: oklch(0.95 0.01 0);
   --sidebar-primary: oklch(0.72 0.22 130);
   --sidebar-primary-foreground: oklch(0.12 0.02 240);
-  --sidebar-accent: oklch(0.63 0.19 235);
+  --sidebar-accent: oklch(0.28 0.05 240);
   --sidebar-accent-foreground: oklch(0.95 0.01 0);
-  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-border: oklch(0.28 0.02 240);
   --sidebar-ring: oklch(0.68 0.22 260);
 }
 
@@ -121,5 +121,107 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Sidebar Enhancements */
+@layer components {
+  /* Sidebar Gradient Background */
+  [data-sidebar="sidebar"] {
+    @apply bg-gradient-to-b from-sidebar via-sidebar to-sidebar/95 dark:from-sidebar dark:via-sidebar dark:to-sidebar/90;
+  }
+
+  /* Menu Item Hover Effects */
+  [data-sidebar="menu-button"]:hover {
+    @apply shadow-md transition-all duration-200;
+  }
+
+  /* Menu Item Active State */
+  [data-sidebar="menu-button"][data-active="true"] {
+    @apply scale-105 shadow-lg;
+  }
+
+  /* Sidebar Transitions */
+  [data-slot="sidebar-container"] {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Icon Animations */
+  [data-sidebar="menu-button"] svg {
+    @apply transition-transform duration-200;
+  }
+
+  [data-sidebar="menu-button"]:hover svg {
+    @apply scale-110;
+  }
+}
+
+/* Modal Animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-modal-in {
+    animation: modalFadeIn 0.2s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.2s ease-out;
+  }
+
+  /* Sidebar Menu Item Effects */
+  .sidebar-menu-item-hover {
+    @apply relative overflow-hidden;
+  }
+
+  .sidebar-menu-item-hover::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500;
+  }
+
+  /* Button Focus States */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+
+  .focus-ring-offset {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-background;
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 }

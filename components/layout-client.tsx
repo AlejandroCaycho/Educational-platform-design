@@ -1,17 +1,23 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
-  GraduationCap, Bell, Building2, Shield
-} from 'lucide-react';
-import { Toaster } from './ui/toaster';
+  Bell, Building2, Shield
+} from 'lucide-react'
+import { Toaster } from './ui/toaster'
+import { SidebarLogo } from '@/components/sidebar-logo'
+import { SidebarUserSection } from '@/components/sidebar-user-section'
+import { UserProfileModal } from '@/components/modals/user-profile-modal'
+import { SidebarSettingsModal } from '@/components/modals/sidebar-settings-modal'
+import { useUserModal } from '@/hooks/use-user-modal'
 
 function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolean) => void }) {
-  const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname()
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { profileOpen, settingsOpen, currentUser, openProfileModal, closeProfileModal, openSettingsModal, closeSettingsModal, updateUser } = useUserModal()
 
   const menuItems = [
     { icon: Home, label: 'Inicio', href: '/' },
@@ -20,18 +26,17 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
     { icon: FileText, label: 'Reportes', href: '/reportes' },
     { icon: Users, label: 'Usuarios', href: '/usuarios' },
     { icon: Settings, label: 'Configuración', href: '/configuracion' },
-    // Admin Section
     { icon: Building2, label: 'Instituciones', href: '/instituciones' },
     { icon: Shield, label: 'Acceso', href: '/acceso' },
-  ];
+  ]
 
   const handleToggle = () => {
     if (window.innerWidth < 1024) {
-      setIsOpen(!isOpen);
+      setIsOpen(!isOpen)
     } else {
-      setIsCollapsed(!isCollapsed);
+      setIsCollapsed(!isCollapsed)
     }
-  };
+  }
 
   return (
     <>
@@ -42,83 +47,88 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
         />
       )}
 
-      <aside className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-sidebar border-r border-border transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}>
-        {/* Header del Sidebar */}
-        <div className={`flex flex-col lg:flex-row lg:items-center px-3 py-3 border-b border-border flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
-          <div className={`flex items-center gap-2 flex-1 min-w-0 ${isCollapsed ? 'lg:hidden' : ''}`}>
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
-              E
-            </div>
-            <div className="hidden sm:block min-w-0">
-              <h1 className="text-base font-bold text-foreground truncate">EduNova</h1>
-              <p className="text-xs text-muted-foreground truncate">Plataforma</p>
-            </div>
-          </div>
-          
-          <div className={`flex gap-2 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'}`}>
-            <button className="p-1.5 hover:bg-muted rounded-lg transition-colors relative flex items-center justify-center" title="Notificaciones">
-              <Bell className="w-4 h-4 text-foreground" />
-              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full"></span>
+      <aside
+        className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-gradient-to-b from-sidebar to-sidebar/95 dark:from-sidebar dark:to-sidebar/90 border-r border-sidebar-border shadow-lg transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}
+      >
+        {/* Header con Logo Dinámico */}
+        <div className={`flex flex-col lg:flex-row lg:items-center px-3 py-3 border-b border-sidebar-border flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : ''}`}>
+          <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />
+
+          <div className={`flex gap-2 flex-shrink-0 ${isCollapsed ? 'flex-col' : 'flex-row'} mt-2 lg:mt-0`}>
+            <button
+              className="p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg transition-all duration-200 relative flex items-center justify-center text-sidebar-foreground group"
+              title="Notificaciones"
+              aria-label="Notificaciones"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-destructive rounded-full animate-pulse"></span>
             </button>
             <button
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors text-foreground flex items-center justify-center"
+              className="p-1.5 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg transition-all duration-200 text-sidebar-foreground flex items-center justify-center"
               onClick={handleToggle}
               title={isCollapsed ? 'Expandir' : 'Colapsar'}
+              aria-label={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
             >
               {isCollapsed && !isOpen ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
-        {/* Menu */}
+        {/* Menu de Navegación */}
         <nav className={`p-4 space-y-2 flex-1 overflow-y-auto transition-all duration-300 ${isCollapsed ? 'lg:p-2' : ''}`}>
           {menuItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 group relative overflow-hidden ${
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-foreground hover:bg-muted'
-                } ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`}
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md scale-105'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                } ${isCollapsed ? 'lg:justify-center lg:px-2 lg:py-2.5' : ''}`}
               >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {/* Fondo de hover mejorado */}
+                {!isActive && (
+                  <div className="absolute inset-0 bg-sidebar-accent/0 group-hover:bg-sidebar-accent/50 transition-all duration-300 -z-10" />
+                )}
+                <item.icon className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" />
                 {!isCollapsed && <span className="truncate">{item.label}</span>}
               </Link>
-            );
+            )
           })}
         </nav>
 
-        {/* Usuario al final */}
-        <div className={`px-4 py-4 border-t border-border flex-shrink-0 mt-auto transition-all duration-300 ${isCollapsed ? 'lg:px-2' : ''}`}>
-          <button className={`w-full flex items-center gap-3 p-3 bg-muted hover:bg-muted rounded-lg transition-colors text-left ${isCollapsed ? 'lg:justify-center' : ''}`}>
-            <div className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            {!isCollapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">Familia García</p>
-                <p className="text-xs text-muted-foreground truncate">Padre</p>
-              </div>
-            )}
-          </button>
-        </div>
+        {/* Sección de Usuario Mejorada */}
+        <SidebarUserSection
+          collapsed={isCollapsed}
+          user={currentUser}
+          onProfileClick={openProfileModal}
+          onSettingsClick={openSettingsModal}
+        />
       </aside>
+
+      {/* Modales */}
+      <UserProfileModal
+        open={profileOpen}
+        user={currentUser}
+        onClose={closeProfileModal}
+        onUpdate={updateUser}
+      />
+      <SidebarSettingsModal open={settingsOpen} onClose={closeSettingsModal} />
     </>
-  );
+  )
 }
 
 export default function LayoutClient({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">
@@ -128,5 +138,5 @@ export default function LayoutClient({
       </main>
       <Toaster />
     </div>
-  );
+  )
 }
