@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
-  GraduationCap, Bell, Building2, Shield, Lock
+  GraduationCap, Bell, Building2, Shield
 } from 'lucide-react';
 import { Toaster } from './ui/toaster';
 
@@ -22,9 +22,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
     { icon: Settings, label: 'Configuración', href: '/configuracion' },
     // Admin Section
     { icon: Building2, label: 'Instituciones', href: '/instituciones' },
-    { icon: Shield, label: 'Roles', href: '/roles' },
-    { icon: Lock, label: 'Permisos', href: '/permisos' },
-    { icon: Settings, label: 'Admin Configuración', href: '/admin-configuracion' },
+    { icon: Shield, label: 'Acceso', href: '/acceso' },
   ];
 
   const handleToggle = () => {
