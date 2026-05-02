@@ -92,69 +92,67 @@ export default function Usuarios() {
         </button>
       </div>
 
-      {/* Content - 3 Column Layout */}
-      <div className="flex-1 overflow-hidden px-8 py-6">
-        <div className="grid grid-cols-3 gap-6 h-full">
-          {/* Column 1: Stats y Búsqueda */}
-          <div className="space-y-4 overflow-y-auto pr-2">
-            <div>
-              <h3 className="text-sm font-semibold text-foreground mb-3">Estadísticas</h3>
-              <div className="space-y-3">
-                <div className="bg-card border border-border/40 rounded-lg p-4">
-                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Total Usuarios</p>
-                  <p className="text-3xl font-bold text-foreground">{usuarios.length}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">en el sistema</p>
-                </div>
-                <div className="bg-card border border-border/40 rounded-lg p-4">
-                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                    Activos
-                  </p>
-                  <p className="text-3xl font-bold text-foreground">{totalActivos}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">{Math.round((totalActivos/usuarios.length)*100)}% del total</p>
-                </div>
-                <div className="bg-card border border-border/40 rounded-lg p-4">
-                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Docentes</p>
-                  <p className="text-3xl font-bold text-foreground">{totalDocentes}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">registrados</p>
-                </div>
-                <div className="bg-card border border-border/40 rounded-lg p-4">
-                  <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Padres</p>
-                  <p className="text-3xl font-bold text-foreground">{totalPadres}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">en la plataforma</p>
-                </div>
-              </div>
+      {/* Content - Vertical Layout */}
+      <div className="flex-1 overflow-hidden px-8 py-6 flex flex-col gap-6">
+        {/* Stats: Horizontal */}
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Estadísticas</h3>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="bg-card border border-border/40 rounded-lg p-4">
+              <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Total Usuarios</p>
+              <p className="text-3xl font-bold text-foreground">{usuarios.length}</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">en el sistema</p>
             </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-foreground mb-3">Filtros</h3>
-              <div className="bg-card border border-border/40 rounded-lg p-4 space-y-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-                  <input
-                    type="text"
-                    placeholder="Buscar usuario..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                <select
-                  value={filtroRol}
-                  onChange={(e) => setFiltroRol(e.target.value)}
-                  className="w-full px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                >
-                  <option value="todos">Todos los roles</option>
-                  <option value="Padre">Padres</option>
-                  <option value="Docente">Docentes</option>
-                  <option value="Administrador">Administradores</option>
-                </select>
-              </div>
+            <div className="bg-card border border-border/40 rounded-lg p-4">
+              <p className="text-xs font-semibold text-muted-foreground/70 mb-2 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                Activos
+              </p>
+              <p className="text-3xl font-bold text-foreground">{totalActivos}</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">{Math.round((totalActivos/usuarios.length)*100)}% del total</p>
+            </div>
+            <div className="bg-card border border-border/40 rounded-lg p-4">
+              <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Docentes</p>
+              <p className="text-3xl font-bold text-foreground">{totalDocentes}</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">registrados</p>
+            </div>
+            <div className="bg-card border border-border/40 rounded-lg p-4">
+              <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Padres</p>
+              <p className="text-3xl font-bold text-foreground">{totalPadres}</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">en la plataforma</p>
             </div>
           </div>
+        </div>
 
-          {/* Column 2 & 3: Users List */}
-          <div className="col-span-2 overflow-y-auto pr-2">
+        {/* Filtros */}
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Filtros</h3>
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
+              <input
+                type="text"
+                placeholder="Buscar usuario..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 bg-card border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+            <select
+              value={filtroRol}
+              onChange={(e) => setFiltroRol(e.target.value)}
+              className="px-4 py-2 bg-card border border-border/40 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 min-w-fit"
+            >
+              <option value="todos">Todos los roles</option>
+              <option value="Padre">Padres</option>
+              <option value="Docente">Docentes</option>
+              <option value="Administrador">Administradores</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Users List */}
+        <div className="flex-1 overflow-y-auto pr-2">
             {usuariosFiltrados.length > 0 ? (
               <div className="space-y-2.5">
                 {usuariosFiltrados.map(usuario => (
