@@ -48,7 +48,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
       )}
 
       <aside
-        className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-sidebar border-r border-sidebar-border shadow-xl transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
+        className={`fixed lg:static top-0 left-0 h-screen lg:h-full bg-sidebar border-r border-sidebar-border transition-all duration-300 z-40 flex flex-col lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } ${isCollapsed ? 'lg:w-20' : 'w-64'}`}
       >
@@ -66,7 +66,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
               aria-label="Notificaciones"
             >
               <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-lg"></span>
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
             </button>
             <button
               className="p-2.5 rounded-lg transition-all duration-200 text-sidebar-foreground hover:bg-sidebar-accent flex items-center justify-center border border-sidebar-border hover:border-sidebar-accent"
@@ -90,7 +90,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
                 onClick={() => setIsOpen(false)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 group border ${
                   isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg scale-105 border-sidebar-primary'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground scale-105 border-sidebar-primary'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent/30 border-transparent hover:border-sidebar-accent'
                 } ${isCollapsed ? 'lg:justify-center lg:px-2.5 lg:py-2.5' : ''}`}
               >
