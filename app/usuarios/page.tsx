@@ -220,7 +220,6 @@ export default function Usuarios() {
                 </div>
               </div>
             )}
-          </div>
         </div>
       </div>
 
