@@ -31,11 +31,14 @@ function getStatusBadge(estado: string) {
     : 'bg-slate-500/10 text-slate-700 border-slate-200/50';
 }
 
+const ITEMS_PER_PAGE = 5;
+
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState(usuariosData);
   const [searchTerm, setSearchTerm] = useState('');
   const [filtroRol, setFiltroRol] = useState('todos');
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [newUser, setNewUser] = useState({
     nombre: '',
     email: '',
@@ -49,6 +52,12 @@ export default function Usuarios() {
     const matchesRol = filtroRol === 'todos' || u.rol === filtroRol;
     return matchesSearch && matchesRol;
   });
+
+  const totalPages = Math.ceil(usuariosFiltrados.length / ITEMS_PER_PAGE);
+  const usuariosActuales = usuariosFiltrados.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handleAddUser = () => {
     if (newUser.nombre && newUser.email) {
@@ -77,296 +86,322 @@ export default function Usuarios() {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden px-8 py-8 border-b border-border/30 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2.5 bg-primary/20 rounded-lg">
-                <Users className="w-6 h-6 text-primary" />
-              </div>
-              <h1 className="text-4xl font-bold text-foreground">Gestión de Usuarios</h1>
-            </div>
-            <p className="text-base text-muted-foreground max-w-2xl mt-2">Administra, monitorea y controla todos los usuarios de la plataforma EduNova con herramientas avanzadas</p>
+      {/* Header - Same height as sidebar header */}
+      <div className="px-8 py-4 border-b border-border/30 flex items-center justify-between bg-card/50">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/20 rounded-lg">
+            <Users className="w-5 h-5 text-primary" />
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-2.5 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 active:scale-95 transition-all font-semibold text-sm shadow-sm hover:shadow-md"
-          >
-            <Plus className="w-5 h-5" />
-            Nuevo Usuario
-          </button>
+          <div>
+            <h1 className="text-lg font-bold text-foreground">Gestión de Usuarios</h1>
+            <p className="text-xs text-muted-foreground">Administra todos los usuarios</p>
+          </div>
         </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 active:scale-95 transition-all font-semibold text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Nuevo Usuario
+        </button>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-auto px-8 py-8">
-        <div className="space-y-8 max-w-full">
-          {/* Stats Grid - Enhanced */}
-          <div className="grid grid-cols-4 gap-6">
-            {/* Total Usuarios */}
-            <div className="group relative bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-6 hover:border-primary/40 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-1">Total de Usuarios</p>
-                    <p className="text-4xl font-bold text-foreground">{usuarios.length}</p>
-                  </div>
-                  <div className="p-3 bg-primary/12 rounded-xl group-hover:bg-primary/20 transition-colors">
-                    <Users className="w-6 h-6 text-primary" />
-                  </div>
+      {/* Content - Fits in remaining viewport height */}
+      <div className="flex-1 overflow-hidden flex flex-col px-8 py-6">
+        <div className="space-y-5 flex-1 flex flex-col overflow-hidden">
+        {/* Stats Grid - Compact */}
+        <div className="grid grid-cols-4 gap-4 flex-shrink-0">
+          <div className="group relative bg-card border border-border/40 rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-0.5">Total Usuarios</p>
+                  <p className="text-2xl font-bold text-foreground">{usuarios.length}</p>
                 </div>
-                <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold">
-                  <TrendingUp className="w-4 h-4" />
-                  Crecimiento activo
+                <div className="p-2 bg-primary/12 rounded-lg group-hover:bg-primary/20 transition-colors">
+                  <Users className="w-5 h-5 text-primary" />
                 </div>
-              </div>
-            </div>
-
-            {/* Activos */}
-            <div className="group relative bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-6 hover:border-emerald-500/40 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-1">Usuarios Activos</p>
-                    <p className="text-4xl font-bold text-foreground">{totalActivos}</p>
-                  </div>
-                  <div className="p-3 bg-emerald-500/12 rounded-xl group-hover:bg-emerald-500/20 transition-colors">
-                    <Activity className="w-6 h-6 text-emerald-600" />
-                  </div>
-                </div>
-                <div className="text-emerald-600 text-sm font-semibold">
-                  {Math.round((totalActivos/usuarios.length)*100)}% del total
-                </div>
-              </div>
-            </div>
-
-            {/* Docentes */}
-            <div className="group relative bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-6 hover:border-blue-500/40 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-1">Docentes Registrados</p>
-                    <p className="text-4xl font-bold text-foreground">{totalDocentes}</p>
-                  </div>
-                  <div className="p-3 bg-blue-500/12 rounded-xl group-hover:bg-blue-500/20 transition-colors">
-                    <BookOpen className="w-6 h-6 text-blue-600" />
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm">Personal educativo</p>
-              </div>
-            </div>
-
-            {/* Padres */}
-            <div className="group relative bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-6 hover:border-purple-500/40 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-1">Padres/Tutores</p>
-                    <p className="text-4xl font-bold text-foreground">{totalPadres}</p>
-                  </div>
-                  <div className="p-3 bg-purple-500/12 rounded-xl group-hover:bg-purple-500/20 transition-colors">
-                    <Heart className="w-6 h-6 text-purple-600" />
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm">En la plataforma</p>
               </div>
             </div>
           </div>
 
-          {/* Search & Filters - Premium */}
-          <div className="bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <Filter className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Búsqueda Avanzada</h2>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1 relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Buscar por nombre, email o ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
-                />
-              </div>
-
-              <div className="relative group w-48">
-                <select
-                  value={filtroRol}
-                  onChange={(e) => setFiltroRol(e.target.value)}
-                  className="w-full px-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all appearance-none cursor-pointer"
-                >
-                  <option value="todos">Todos los roles</option>
-                  <option value="Padre">Padres</option>
-                  <option value="Docente">Docentes</option>
-                  <option value="Administrador">Administradores</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <div className="group relative bg-card border border-border/40 rounded-xl p-4 hover:border-emerald-500/40 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-0.5">Activos</p>
+                  <p className="text-2xl font-bold text-foreground">{totalActivos}</p>
+                </div>
+                <div className="p-2 bg-emerald-500/12 rounded-lg group-hover:bg-emerald-500/20 transition-colors">
+                  <Activity className="w-5 h-5 text-emerald-600" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Users Table - Modern */}
-          <div className="bg-white dark:bg-slate-800 border border-border/40 rounded-2xl overflow-hidden flex flex-col max-h-96">
-            {/* Table Header */}
-            <div className="px-6 py-4 bg-background/50 border-b border-border/20 flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-widest">
-              <div className="flex-1">Usuario</div>
-              <div className="w-48">Email</div>
-              <div className="w-28">Rol</div>
-              <div className="w-32">Asignación</div>
-              <div className="w-24 text-center">Estado</div>
-              <div className="w-24 text-right">Acciones</div>
+          <div className="group relative bg-card border border-border/40 rounded-xl p-4 hover:border-blue-500/40 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-0.5">Docentes</p>
+                  <p className="text-2xl font-bold text-foreground">{totalDocentes}</p>
+                </div>
+                <div className="p-2 bg-blue-500/12 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                  <BookOpen className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="group relative bg-card border border-border/40 rounded-xl p-4 hover:border-purple-500/40 hover:shadow-md transition-all cursor-pointer overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground mb-0.5">Padres</p>
+                  <p className="text-2xl font-bold text-foreground">{totalPadres}</p>
+                </div>
+                <div className="p-2 bg-purple-500/12 rounded-lg group-hover:bg-purple-500/20 transition-colors">
+                  <Heart className="w-5 h-5 text-purple-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search & Filters - Compact */}
+        <div className="bg-card border border-border/40 rounded-xl p-4 flex-shrink-0">
+          <div className="flex gap-3">
+            <div className="flex-1 relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                type="text"
+                placeholder="Buscar por nombre o email..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full pl-10 pr-3 py-2.5 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
+              />
             </div>
 
-            {/* Table Body */}
-            <div className="overflow-y-auto flex-1">
-              {usuariosFiltrados.length > 0 ? (
-                <div className="divide-y divide-border/10">
-                  {usuariosFiltrados.map((usuario) => (
-                    <div
-                      key={usuario.id}
-                      className="px-6 py-4 hover:bg-primary/3 transition-colors group border-l-4 border-l-transparent hover:border-l-primary flex items-center justify-between"
-                    >
-                      {/* Usuario */}
-                      <div className="flex-1 flex items-center gap-3">
-                        <div className="p-2.5 bg-primary/12 rounded-lg flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                          <RoleIcon rol={usuario.rol} />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-foreground text-sm">{usuario.nombre}</p>
-                          <p className="text-xs text-muted-foreground/60 mt-0.5">{usuario.fecha}</p>
-                        </div>
-                      </div>
+            <div className="relative group w-40">
+              <select
+                value={filtroRol}
+                onChange={(e) => {
+                  setFiltroRol(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full px-3 py-2.5 bg-background border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all appearance-none cursor-pointer"
+              >
+                <option value="todos">Todos los roles</option>
+                <option value="Padre">Padres</option>
+                <option value="Docente">Docentes</option>
+                <option value="Administrador">Administradores</option>
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            </div>
+          </div>
+        </div>
 
-                      {/* Email */}
-                      <div className="w-48 text-sm text-muted-foreground truncate flex items-center gap-2">
-                        <Mail className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
-                        <span className="truncate">{usuario.email}</span>
-                      </div>
+        {/* Users Table - Compact with Pagination */}
+        <div className="bg-card border border-border/40 rounded-xl overflow-hidden flex flex-col flex-1">
+          {/* Table Header */}
+          <div className="px-5 py-3 bg-background/50 border-b border-border/20 flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide flex-shrink-0">
+            <div className="flex-1">Usuario</div>
+            <div className="w-40">Email</div>
+            <div className="w-24">Rol</div>
+            <div className="w-28">Asignación</div>
+            <div className="w-20 text-center">Estado</div>
+            <div className="w-20 text-right">Acciones</div>
+          </div>
 
-                      {/* Rol */}
-                      <div className="w-28">
-                        <span className="px-3 py-1.5 bg-primary/12 text-primary text-xs font-semibold rounded-full whitespace-nowrap">
-                          {usuario.rol}
-                        </span>
+          {/* Table Body */}
+          <div className="overflow-y-auto flex-1">
+            {usuariosActuales.length > 0 ? (
+              <div className="divide-y divide-border/10">
+                {usuariosActuales.map((usuario) => (
+                  <div
+                    key={usuario.id}
+                    className="px-5 py-3 hover:bg-primary/3 transition-colors group border-l-4 border-l-transparent hover:border-l-primary flex items-center justify-between"
+                  >
+                    {/* Usuario */}
+                    <div className="flex-1 flex items-center gap-2">
+                      <div className="p-1.5 bg-primary/12 rounded-lg flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <RoleIcon rol={usuario.rol} />
                       </div>
-
-                      {/* Asignación */}
-                      <div className="w-32">
-                        <p className="text-sm font-medium text-foreground truncate">{usuario.estudiante}</p>
-                      </div>
-
-                      {/* Estado */}
-                      <div className="w-24 text-center">
-                        <span className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusBadge(usuario.estado)}`}>
-                          {usuario.estado}
-                        </span>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="w-24 flex items-center gap-1.5 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 hover:bg-primary/15 rounded-lg transition-all text-primary hover:scale-110" title="Editar">
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(usuario.id)}
-                          className="p-2 hover:bg-red-500/15 rounded-lg transition-all text-red-600 hover:scale-110"
-                          title="Eliminar"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground text-sm">{usuario.nombre}</p>
+                        <p className="text-xs text-muted-foreground/60">{usuario.fecha}</p>
                       </div>
                     </div>
+
+                    {/* Email */}
+                    <div className="w-40 text-sm text-muted-foreground truncate flex items-center gap-1.5">
+                      <Mail className="w-3 h-3 flex-shrink-0 text-primary/60" />
+                      <span className="truncate">{usuario.email}</span>
+                    </div>
+
+                    {/* Rol */}
+                    <div className="w-24">
+                      <span className="px-2.5 py-1 bg-primary/12 text-primary text-xs font-semibold rounded-full whitespace-nowrap">
+                        {usuario.rol}
+                      </span>
+                    </div>
+
+                    {/* Asignación */}
+                    <div className="w-28">
+                      <p className="text-sm font-medium text-foreground truncate">{usuario.estudiante}</p>
+                    </div>
+
+                    {/* Estado */}
+                    <div className="w-20 text-center">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${getStatusBadge(usuario.estado)}`}>
+                        {usuario.estado}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="w-20 flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-1.5 hover:bg-primary/15 rounded-lg transition-all text-primary hover:scale-110" title="Editar">
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(usuario.id)}
+                        className="p-1.5 hover:bg-red-500/15 rounded-lg transition-all text-red-600 hover:scale-110"
+                        title="Eliminar"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                  <Users className="w-12 h-12 text-muted-foreground/20 mx-auto mb-3" />
+                  <p className="text-muted-foreground/60 font-medium text-sm">No se encontraron usuarios</p>
+                  <p className="text-muted-foreground/40 text-xs mt-1">Ajusta tus filtros o agrega nuevos</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {usuariosFiltrados.length > 0 && (
+            <div className="px-5 py-3 border-t border-border/20 bg-background/50 flex items-center justify-between text-sm flex-shrink-0">
+              <div className="text-muted-foreground text-xs">
+                Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, usuariosFiltrados.length)} de {usuariosFiltrados.length}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded-lg border border-border/30 text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-background hover:border-primary/30"
+                >
+                  Anterior
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-2.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                        currentPage === page
+                          ? 'bg-primary text-primary-foreground'
+                          : 'border border-border/30 hover:bg-background hover:border-primary/30'
+                      }`}
+                    >
+                      {page}
+                    </button>
                   ))}
                 </div>
-              ) : (
-                <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <Users className="w-16 h-16 text-muted-foreground/20 mx-auto mb-4" />
-                    <p className="text-muted-foreground/60 font-medium">No se encontraron usuarios</p>
-                    <p className="text-muted-foreground/40 text-sm mt-1">Ajusta tus filtros o agrega nuevos usuarios</p>
-                  </div>
-                </div>
-              )}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded-lg border border-border/30 text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-background hover:border-primary/30"
+                >
+                  Siguiente
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Modal Agregar Usuario */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 border border-border/40 rounded-2xl p-8 w-full max-w-md shadow-2xl">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Crear Nuevo Usuario</h2>
-            <div className="space-y-4">
-              <div className="group">
-                <label className="text-sm font-semibold text-foreground block mb-2">Nombre Completo</label>
+          <div className="bg-card border border-border/40 rounded-xl p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-lg font-bold text-foreground mb-4">Nuevo Usuario</h2>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">Nombre</label>
                 <input
                   type="text"
                   placeholder="Ej: Juan Pérez García"
                   value={newUser.nombre}
                   onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
-                  className="w-full px-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
+                  className="w-full px-3 py-2 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
                 />
               </div>
 
-              <div className="group">
-                <label className="text-sm font-semibold text-foreground block mb-2">Email</label>
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">Email</label>
                 <input
                   type="email"
                   placeholder="usuario@example.com"
                   value={newUser.email}
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
+                  className="w-full px-3 py-2 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
                 />
               </div>
 
-              <div className="group">
-                <label className="text-sm font-semibold text-foreground block mb-2">Rol</label>
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">Rol</label>
                 <div className="relative">
                   <select
                     value={newUser.rol}
                     onChange={(e) => setNewUser({ ...newUser, rol: e.target.value })}
-                    className="w-full px-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all appearance-none cursor-pointer"
+                    className="w-full px-3 py-2 bg-background border border-border/30 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all appearance-none cursor-pointer"
                   >
                     <option value="Padre">Padre/Madre</option>
                     <option value="Docente">Docente</option>
                     <option value="Administrador">Administrador</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
                 </div>
               </div>
 
-              <div className="group">
-                <label className="text-sm font-semibold text-foreground block mb-2">Asignación</label>
+              <div>
+                <label className="text-xs font-semibold text-foreground block mb-1.5">Asignación</label>
                 <input
                   type="text"
                   placeholder="Ej: 5to Primaria A"
                   value={newUser.estudiante}
                   onChange={(e) => setNewUser({ ...newUser, estudiante: e.target.value })}
-                  className="w-full px-4 py-3 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
+                  className="w-full px-3 py-2 bg-background border border-border/30 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all"
                 />
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end mt-8">
+            <div className="flex gap-2 justify-end mt-6">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-6 py-2.5 bg-muted/50 text-foreground rounded-lg hover:bg-muted transition-colors font-semibold text-sm border border-border/30"
+                className="px-4 py-2 bg-muted/50 text-foreground rounded-lg hover:bg-muted transition-colors font-semibold text-sm border border-border/30"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleAddUser}
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold text-sm shadow-sm"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all font-semibold text-sm"
               >
-                Crear Usuario
+                Crear
               </button>
             </div>
           </div>
