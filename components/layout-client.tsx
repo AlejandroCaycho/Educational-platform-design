@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
-  Bell, Building2, Shield
+  Bell, Building2, Shield, GraduationCap, BookOpen, ClipboardCheck, 
+  ListTodo, AlertTriangle, UserCog, Layers, BookMarked
 } from 'lucide-react'
 import { Toaster } from './ui/toaster'
 import { SidebarLogo } from '@/components/sidebar-logo'
@@ -21,13 +22,20 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
 
   const menuItems = [
     { icon: Home, label: 'Inicio', href: '/' },
-    { icon: MessageSquare, label: 'Mensajes', href: '/mensajes' },
+    { icon: GraduationCap, label: 'Estudiantes', href: '/estudiantes' },
+    { icon: UserCog, label: 'Profesores', href: '/profesores' },
+    { icon: BookOpen, label: 'Calificaciones', href: '/calificaciones' },
+    { icon: ClipboardCheck, label: 'Asistencia', href: '/asistencia' },
+    { icon: ListTodo, label: 'Tareas', href: '/tareas' },
+    { icon: AlertTriangle, label: 'Incidencias', href: '/incidencias' },
+    { icon: Layers, label: 'Grados', href: '/grados' },
+    { icon: BookMarked, label: 'Materias', href: '/materias' },
     { icon: Calendar, label: 'Calendario', href: '/calendario' },
+    { icon: MessageSquare, label: 'Mensajes', href: '/mensajes' },
     { icon: FileText, label: 'Reportes', href: '/reportes' },
     { icon: Users, label: 'Usuarios', href: '/usuarios' },
-    { icon: Settings, label: 'Configuración', href: '/configuracion' },
     { icon: Building2, label: 'Instituciones', href: '/instituciones' },
-    { icon: Shield, label: 'Acceso', href: '/acceso' },
+    { icon: Settings, label: 'Configuracion', href: '/configuracion' },
   ]
 
   const handleToggle = () => {
