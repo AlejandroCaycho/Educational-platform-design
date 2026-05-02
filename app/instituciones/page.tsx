@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Edit2, Trash2, Search, MapPin, Mail, Phone, Globe, Building2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, MapPin, Mail, Phone, Building2, Filter, ChevronDown } from 'lucide-react';
 
 interface Institucion {
   id: number;
@@ -86,199 +86,124 @@ export default function InstitucionesPage() {
   const totalActivas = instituciones.filter(i => i.estado).length;
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
-      <div className="px-8 py-5 border-b border-border/40 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Instituciones</h1>
-          <p className="text-sm text-muted-foreground mt-1">Gestiona las sedes y instituciones registradas</p>
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
+      {/* Header unificado h-16 */}
+      <div className="h-16 px-8 border-b border-border/50 flex items-center justify-between bg-background flex-shrink-0 z-10 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Building2 className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground leading-tight">Instituciones</h1>
+            <p className="text-xs text-muted-foreground font-medium">Gestión de Sedes y Locales</p>
+          </div>
         </div>
-        <button
+        <button 
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-md shadow-primary/20 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          Nueva Institución
+          <span>Nueva Institución</span>
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="px-8 py-4 border-b border-border/40">
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Total</p>
-            <p className="text-2xl font-bold text-foreground">{instituciones.length}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">registradas</p>
-          </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500"></span>
-              Activas
-            </p>
-            <p className="text-2xl font-bold text-foreground">{totalActivas}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">{Math.round((totalActivas/instituciones.length)*100)}%</p>
-          </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Ciudades</p>
-            <p className="text-2xl font-bold text-foreground">{new Set(instituciones.map(i => i.ciudad)).size}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">ubicaciones</p>
-          </div>
-          <div className="bg-card border border-border/40 rounded-lg p-4">
-            <p className="text-xs font-semibold text-muted-foreground/70 mb-2">Niveles</p>
-            <p className="text-2xl font-bold text-foreground">{new Set(instituciones.map(i => i.tipo_institucion)).size}</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">tipos únicos</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="px-8 py-3 border-b border-border/40 flex-shrink-0">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
-          <input
-            type="text"
-            placeholder="Buscar por nombre, email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 bg-muted/40 border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-        </div>
-      </div>
-
-      {/* Form */}
-      {showForm && (
-        <div className="px-8 py-4 border-b border-border/40 bg-muted/20">
-          <div className="bg-card border border-border/40 rounded-lg p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-foreground">Nueva Institución</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="text"
-                placeholder="Nombre completo"
-                value={newInst.nombre}
-                onChange={(e) => setNewInst({ ...newInst, nombre: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-              <input
-                type="text"
-                placeholder="Nombre corto"
-                value={newInst.nombre_corto}
-                onChange={(e) => setNewInst({ ...newInst, nombre_corto: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={newInst.email}
-                onChange={(e) => setNewInst({ ...newInst, email: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-              <input
-                type="tel"
-                placeholder="Teléfono"
-                value={newInst.telefono}
-                onChange={(e) => setNewInst({ ...newInst, telefono: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-              <input
-                type="text"
-                placeholder="Ciudad"
-                value={newInst.ciudad}
-                onChange={(e) => setNewInst({ ...newInst, ciudad: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-              <input
-                type="text"
-                placeholder="Código Modular"
-                value={newInst.codigo_modular}
-                onChange={(e) => setNewInst({ ...newInst, codigo_modular: e.target.value })}
-                className="px-3 py-2 bg-background border border-border/40 rounded-lg text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
+      <div className="flex-1 overflow-y-auto p-6 min-h-0 space-y-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 transition-colors flex items-center justify-between shadow-sm">
+            <div>
+              <p className="text-muted-foreground text-sm mb-1">Total</p>
+              <p className="text-2xl font-bold text-foreground">{instituciones.length}</p>
             </div>
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-muted/50 text-foreground rounded-lg hover:bg-muted transition-colors font-medium text-sm border border-border/40"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleAddInst}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold text-sm"
-              >
-                Crear
-              </button>
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-muted-foreground"><Building2 className="w-6 h-6" /></div>
+          </div>
+          <div className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 transition-colors flex items-center justify-between shadow-sm">
+            <div>
+              <p className="text-muted-foreground text-sm mb-1">Activas</p>
+              <p className="text-2xl font-bold text-emerald-600">{totalActivas}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-emerald-500"><Plus className="w-6 h-6" /></div>
+          </div>
+          <div className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 transition-colors flex items-center justify-between shadow-sm">
+            <div>
+              <p className="text-muted-foreground text-sm mb-1">Ciudades</p>
+              <p className="text-2xl font-bold text-foreground">{new Set(instituciones.map(i => i.ciudad)).size}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-muted-foreground"><MapPin className="w-6 h-6" /></div>
+          </div>
+          <div className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 transition-colors flex items-center justify-between shadow-sm">
+            <div>
+              <p className="text-muted-foreground text-sm mb-1">Niveles</p>
+              <p className="text-2xl font-bold text-foreground">{new Set(instituciones.map(i => i.tipo_institucion)).size}</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-muted-foreground"><Plus className="w-6 h-6" /></div>
+          </div>
+        </div>
+
+        {/* Barra de Búsqueda y Filtros */}
+        <div className="flex flex-wrap items-center justify-between gap-4 bg-card p-4 border border-border rounded-2xl shadow-sm">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Buscar institución..."
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-muted/20 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-semibold"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="flex items-center gap-2 bg-muted/30 px-4 py-2.5 rounded-xl border border-border cursor-pointer hover:bg-muted/50 transition-all">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-bold text-foreground">Filtros</span>
+              <ChevronDown className="w-4 h-4 text-muted-foreground ml-1" />
             </div>
           </div>
         </div>
-      )}
 
-      {/* Instituciones Grid */}
-      <div className="flex-1 overflow-hidden px-8 py-4">
-        <div className="h-full overflow-y-auto">
-          {institucionesFiltradas.length > 0 ? (
-            <div className="space-y-2.5">
-              {institucionesFiltradas.map(inst => (
-                <div
-                  key={inst.id}
-                  className="bg-card border border-border/40 rounded-lg p-4 hover:border-border/60 hover:shadow-sm transition-all group"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="p-2 bg-muted/40 rounded-lg">
-                        <Building2 className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-foreground text-sm truncate">{inst.nombre}</h3>
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-700 border border-green-200/30">
-                            Activa
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground/70 flex-wrap">
-                          <span className="flex items-center gap-1">
-                            <Mail className="w-3 h-3" />
-                            {inst.email}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Phone className="w-3 h-3" />
-                            {inst.telefono}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {inst.ciudad}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+        {/* Instituciones Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-8">
+          {institucionesFiltradas.map(inst => (
+            <div key={inst.id} className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 hover:shadow-lg transition-all duration-300 group flex flex-col relative overflow-hidden shadow-sm">
+              <div className="flex items-start justify-between mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                  <Building2 className="w-7 h-7" />
+                </div>
+                <span className="text-[10px] font-black bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-200 uppercase tracking-widest shadow-sm">Activa</span>
+              </div>
 
-                    <div className="text-right mr-6">
-                      <p className="text-xs text-muted-foreground/60 mb-1">Tipo</p>
-                      <p className="text-sm font-medium text-foreground">{inst.tipo_institucion}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 hover:bg-muted rounded-lg transition-colors text-primary">
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteInst(inst.id)}
-                        className="p-2 hover:bg-destructive/10 rounded-lg transition-colors text-destructive/70 hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors mb-1 leading-tight">{inst.nombre}</h3>
+                <p className="text-xs text-primary/70 font-bold uppercase tracking-widest mb-6">{inst.nombre_corto}</p>
+                
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
+                    <Mail className="w-4 h-4 text-primary/60" />
+                    <span className="truncate">{inst.email}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
+                    <Phone className="w-4 h-4 text-primary/60" />
+                    <span>{inst.telefono}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
+                    <MapPin className="w-4 h-4 text-primary/60" />
+                    <span>{inst.ciudad}</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <Building2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-muted-foreground/60 text-sm">No se encontraron instituciones</p>
+
+                <div className="pt-6 border-t border-border mt-auto flex justify-between items-end">
+                  <div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Nivel</p>
+                    <p className="text-sm font-bold text-foreground truncate max-w-[180px]">{inst.tipo_institucion}</p>
+                  </div>
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                    <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"><Edit2 className="w-4 h-4" /></button>
+                    <button onClick={() => handleDeleteInst(inst.id)} className="p-2 text-muted-foreground hover:text-destructive hover:bg-red-50 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

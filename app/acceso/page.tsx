@@ -120,7 +120,7 @@ export default function AccesoPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
       <div className="px-8 py-5 border-b border-border/40">
         <h1 className="text-2xl font-bold text-foreground">Gestión de Acceso</h1>

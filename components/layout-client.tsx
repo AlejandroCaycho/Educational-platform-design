@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   Home, MessageSquare, Calendar, Settings, FileText, Users, Menu, X,
-  Bell, Building2, Shield
+  Bell, Building2, Shield, GraduationCap, Users as UsersIcon, BookOpen, PenTool, ClipboardList, CheckSquare, CalendarDays, ChevronDown, ChevronRight
 } from 'lucide-react'
 import { Toaster } from './ui/toaster'
 import { SidebarLogo } from '@/components/sidebar-logo'
@@ -19,16 +19,50 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { profileOpen, settingsOpen, currentUser, openProfileModal, closeProfileModal, openSettingsModal, closeSettingsModal, updateUser } = useUserModal()
 
-  const menuItems = [
-    { icon: Home, label: 'Inicio', href: '/' },
-    { icon: MessageSquare, label: 'Mensajes', href: '/mensajes' },
-    { icon: Calendar, label: 'Calendario', href: '/calendario' },
-    { icon: FileText, label: 'Reportes', href: '/reportes' },
-    { icon: Users, label: 'Usuarios', href: '/usuarios' },
-    { icon: Settings, label: 'Configuración', href: '/configuracion' },
-    { icon: Building2, label: 'Instituciones', href: '/instituciones' },
-    { icon: Shield, label: 'Acceso', href: '/acceso' },
+  const menuGroups = [
+    {
+      title: 'Inicio',
+      items: [
+        { icon: Home, label: 'Dashboard', href: '/' },
+        { icon: Calendar, label: 'Agenda', href: '/agenda' },
+      ]
+    },
+    {
+      title: 'Académico',
+      items: [
+        { icon: BookOpen, label: 'Clases y Grados', href: '/clases' },
+        { icon: CheckSquare, label: 'Asistencia', href: '/asistencia' },
+        { icon: PenTool, label: 'Evaluación', href: '/evaluacion' },
+      ]
+    },
+    {
+      title: 'Comunidad',
+      items: [
+        { icon: UsersIcon, label: 'Directorio', href: '/directorio' },
+        { icon: CalendarDays, label: 'Eventos', href: '/eventos' },
+      ]
+    },
+    {
+      title: 'Administración',
+      items: [
+        { icon: Building2, label: 'Instituciones', href: '/instituciones' },
+        { icon: Users, label: 'Usuarios', href: '/usuarios' },
+        { icon: FileText, label: 'Reportes', href: '/reportes' },
+        { icon: Settings, label: 'Configuración', href: '/configuracion' },
+      ]
+    }
   ]
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    'Inicio': true,
+    'Académico': true,
+    'Comunidad': false,
+    'Administración': false
+  })
+
+  const toggleGroup = (title: string) => {
+    setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }))
+  }
 
   const handleToggle = () => {
     if (window.innerWidth < 1024) {
@@ -54,7 +88,7 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
       >
         {/* Header con Logo Dinámico */}
         <div 
-          className={`flex items-center px-3 py-4 border-b border-sidebar-border bg-sidebar flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : 'justify-between'}`}
+          className={`h-16 flex items-center px-4 border-b border-sidebar-border bg-sidebar flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'lg:justify-center' : 'justify-between'}`}
         >
           {!isCollapsed && <SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} />}
           {isCollapsed && <div className="lg:hidden"><SidebarLogo collapsed={isCollapsed} userRole={currentUser.role} /></div>}
@@ -80,25 +114,41 @@ function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolea
         </div>
 
         {/* Menu de Navegación */}
-        <nav className={`px-3 py-4 space-y-1.5 flex-1 overflow-y-auto transition-all duration-300 ${isCollapsed ? 'lg:px-2' : ''}`}>
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 group border ${
-                  isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground scale-105 border-sidebar-primary'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/30 border-transparent hover:border-sidebar-accent'
-                } ${isCollapsed ? 'lg:justify-center lg:px-2.5 lg:py-2.5' : ''}`}
-              >
-                <item.icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${isActive ? 'scale-115' : 'group-hover:scale-110'}`} />
-                {!isCollapsed && <span className="truncate">{item.label}</span>}
-              </Link>
-            )
-          })}
+        <nav className={`px-3 py-4 space-y-4 flex-1 overflow-y-auto transition-all duration-300 custom-scrollbar ${isCollapsed ? 'lg:px-2 space-y-2' : ''}`}>
+          {menuGroups.map((group) => (
+            <div key={group.title} className="space-y-1">
+              {!isCollapsed && (
+                <button 
+                  onClick={() => toggleGroup(group.title)}
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+                >
+                  {group.title}
+                  {openGroups[group.title] ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+              )}
+              
+              <div className={`space-y-1 transition-all duration-300 ${(openGroups[group.title] || isCollapsed) ? 'block opacity-100' : 'hidden opacity-0'}`}>
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 group border ${
+                        isActive
+                          ? 'bg-sidebar-primary text-sidebar-primary-foreground border-sidebar-primary shadow-sm'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 border-transparent hover:border-sidebar-accent'
+                      } ${isCollapsed ? 'lg:justify-center lg:px-2.5 lg:py-2.5' : ''}`}
+                    >
+                      <item.icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                      {!isCollapsed && <span className="truncate">{item.label}</span>}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Sección de Usuario Mejorada */}

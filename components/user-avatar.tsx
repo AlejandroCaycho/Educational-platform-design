@@ -36,8 +36,10 @@ export function UserAvatar({ user, size = 'md', onClick }: UserAvatarProps) {
     .toUpperCase()
     .slice(0, 2)
 
+  const Component = onClick ? 'button' : 'div'
+
   return (
-    <button
+    <Component
       onClick={onClick}
       className={`${sizeClasses[size]} ${colorClasses[user.color]} rounded-lg flex items-center justify-center font-semibold flex-shrink-0 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
       aria-label={`Avatar de ${user.name}`}
@@ -53,6 +55,6 @@ export function UserAvatar({ user, size = 'md', onClick }: UserAvatarProps) {
       ) : (
         <GraduationCap className={iconSizeClasses[size]} />
       )}
-    </button>
+    </Component>
   )
 }

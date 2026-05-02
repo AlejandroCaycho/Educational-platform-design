@@ -1,29 +1,41 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Users, FileText, AlertCircle, MessageSquare, Clock, CheckCircle, X } from 'lucide-react';
+import { BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { TrendingUp, Users, AlertCircle, CheckCircle, X, Download, LayoutDashboard } from 'lucide-react';
 
+// Data for Stacked Bar Chart
 const attendanceData = [
-  { date: 'Lun', presente: 92, ausente: 8 },
-  { date: 'Mar', presente: 88, ausente: 12 },
-  { date: 'Mié', presente: 94, ausente: 6 },
-  { date: 'Jue', presente: 91, ausente: 9 },
-  { date: 'Vie', presente: 95, ausente: 5 },
+  { date: 'Lun', presente: 85, ausente: 15 },
+  { date: 'Mar', presente: 70, ausente: 30 },
+  { date: 'Mié', presente: 95, ausente: 5 },
+  { date: 'Jue', presente: 60, ausente: 40 },
+  { date: 'Vie', presente: 90, ausente: 10 },
 ];
 
+// Data for Area Chart
+const activityData = [
+  { day: 'Lun', interaction: 45, assignments: 20 },
+  { day: 'Mar', interaction: 75, assignments: 35 },
+  { day: 'Mié', interaction: 35, assignments: 65 },
+  { day: 'Jue', interaction: 90, assignments: 45 },
+  { day: 'Vie', interaction: 65, assignments: 85 },
+];
+
+// Data for Radar
 const performanceData = [
-  { name: 'Matemática', value: 8.4 },
-  { name: 'Lengua', value: 8.9 },
-  { name: 'Ciencias', value: 8.6 },
-  { name: 'Historia', value: 7.8 },
+  { name: 'Matemática', value: 9.5 },
+  { name: 'Lengua', value: 6.2 },
+  { name: 'Ciencias', value: 8.8 },
+  { name: 'Historia', value: 5.5 },
+  { name: 'Arte', value: 9.0 },
 ];
 
 const incidentsData = [
-  { name: 'Comportamiento', value: 35 },
-  { name: 'Tareas', value: 28 },
+  { name: 'Comportamiento', value: 40 },
+  { name: 'Tareas', value: 25 },
   { name: 'Uniforme', value: 20 },
-  { name: 'Tardanza', value: 17 },
+  { name: 'Tardanza', value: 15 },
 ];
 
 const COLORS = ['#5048ff', '#10b981', '#06b6d4', '#f59e0b'];
@@ -37,13 +49,13 @@ function StatCard({ icon: Icon, label, value, color = 'primary' }) {
   }[color];
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 hover:border-primary/30 transition-colors">
+    <div className="bg-card rounded-2xl border border-border p-5 hover:border-primary/30 transition-all shadow-sm">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-muted-foreground text-sm mb-1">{label}</p>
-          <p className="text-3xl font-bold text-foreground">{value}</p>
+          <p className="text-2xl font-bold text-foreground leading-none">{value}</p>
         </div>
-        <div className={`w-12 h-12 rounded-lg ${bgColor} flex items-center justify-center`}>
+        <div className={`w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center`}>
           <Icon className="w-6 h-6" />
         </div>
       </div>
@@ -57,161 +69,180 @@ export default function Home() {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    // Solo mostrar la notificación si es la primera vez que entra a esta sesión
     const hasShownWelcome = sessionStorage.getItem('hasShownWelcome');
-    
     if (!hasShownWelcome) {
-      // Obtener el email del usuario y extraer el nombre
       const userEmail = sessionStorage.getItem('userEmail') || 'Usuario';
       const name = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
       setUserName(name);
       setShowWelcome(true);
       sessionStorage.setItem('hasShownWelcome', 'true');
       
-      // Auto-desaparecer después de 3 segundos
-      setTimeout(() => {
+      // La notificación dura 2 segundos antes de empezar a desaparecer
+      const timer = setTimeout(() => {
         setIsHiding(true);
-      }, 3000);
+        // Esperamos 500ms a que termine la animación de colapso para quitarlo del DOM
+        setTimeout(() => {
+          setShowWelcome(false);
+          setIsHiding(false);
+        }, 500);
+      }, 2000);
       
-      // Completar la desaparición después de la animación
-      setTimeout(() => {
-        setShowWelcome(false);
-        setIsHiding(false);
-      }, 3300); // 3000 + 300ms de animación
+      return () => clearTimeout(timer);
     }
   }, []);
 
   return (
-    <div className={`p-5 md:p-6 space-y-6 flex flex-col transition-all duration-300 ${!showWelcome && !isHiding ? 'h-screen' : ''}`}>
-      {/* Welcome Notification */}
-      {showWelcome && (
-        <div className={`transition-all duration-300 overflow-hidden ${isHiding ? 'opacity-0 -translate-y-full h-0' : 'opacity-100 translate-y-0 mb-6'}`}>
-          <div className="bg-gradient-to-r from-primary to-primary/80 rounded-lg p-4 text-white flex items-center justify-between shadow-lg">
-            <div>
-              <h2 className="font-semibold text-lg">¡Bienvenido, {userName}!</h2>
-              <p className="text-sm text-white/90">Aquí está tu resumen de actividad de esta semana.</p>
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
+      {/* Header unificado h-16 */}
+      <div className="h-16 px-8 border-b border-border/50 flex items-center justify-between bg-background flex-shrink-0 z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <LayoutDashboard className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground leading-tight">Dashboard Principal</h1>
+            <p className="text-xs text-muted-foreground font-medium">Resumen general del sistema</p>
+          </div>
+        </div>
+        <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-md shadow-primary/20 flex items-center gap-2">
+          <Download className="w-4 h-4" />
+          <span>Exportar PDF</span>
+        </button>
+      </div>
+
+      <div className="flex-1 flex flex-col p-6 gap-6 min-h-0">
+        {/* Welcome Notification - Colapso de espacio real */}
+        {showWelcome && (
+          <div className={`transition-all duration-500 ease-in-out overflow-hidden flex-shrink-0 ${isHiding ? 'max-h-0 opacity-0 mb-0 pointer-events-none' : 'max-h-32 opacity-100 mb-2'}`}>
+            <div className="bg-primary rounded-2xl p-5 text-white flex items-center justify-between shadow-xl border border-white/10 relative">
+              <div className="relative z-10 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl font-black">
+                  {userName.charAt(0)}
+                </div>
+                <div>
+                  <h2 className="font-bold text-lg leading-tight">¡Bienvenido, {userName}!</h2>
+                  <p className="text-sm text-white/80 font-medium">Panel de control actualizado.</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => { setIsHiding(true); setTimeout(() => setShowWelcome(false), 500); }} 
+                className="relative z-10 ml-4 p-2 hover:bg-white/20 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={() => {
-                setIsHiding(true);
-                setTimeout(() => {
-                  setShowWelcome(false);
-                  setIsHiding(false);
-                }, 300);
-              }}
-              className="ml-4 p-1 hover:bg-white/20 rounded transition-colors flex-shrink-0"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Stats Grid */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300`}>
-        <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
-        <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
-        <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
-        <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
-      </div>
-
-      {/* Charts Section - Modern Graphs - 2 Arriba */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Attendance Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Asistencia Semanal</h3>
-            <div className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">Gráfico de barras</div>
-          </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
-            <BarChart data={attendanceData}>
-              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
-              <Bar dataKey="presente" fill="#5048ff" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="ausente" fill="#fca5a5" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        {/* Stats Grid - No debe ser empujado, debe ser estático */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 flex-shrink-0">
+          <StatCard icon={Users} label="Estudiantes" value="245" color="primary" />
+          <StatCard icon={CheckCircle} label="Asistencia Promedio" value="92%" color="green" />
+          <StatCard icon={TrendingUp} label="Desempeño Promedio" value="8.4" color="blue" />
+          <StatCard icon={AlertCircle} label="En Riesgo" value="12" color="amber" />
         </div>
 
-        {/* Performance Trend Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Tendencia de Desempeño</h3>
-            <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Gráfico de línea</div>
-          </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : 250}>
-            <LineChart data={attendanceData}>
-              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="date" stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
-              <Line type="monotone" dataKey="presente" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
-              <Line type="monotone" dataKey="ausente" stroke="#f59e0b" strokeWidth={3} dot={{ fill: '#f59e0b', r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+        {/* Charts Section - Las gráficas absorben la reducción de altura */}
+        <div className="flex-1 flex flex-col gap-6 min-h-0">
+          {/* Row 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+              <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+                <h3 className="text-lg font-bold text-foreground">Asistencia Semanal</h3>
+                <div className="text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-700 px-3 py-1 rounded-full border border-blue-200">Consolidado</div>
+              </div>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={attendanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" opacity={0.4} />
+                    <XAxis dataKey="date" stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+                    <Bar dataKey="presente" stackId="a" fill="#5048ff" radius={[0, 0, 4, 4]} barSize={40} />
+                    <Bar dataKey="ausente" stackId="a" fill="#fca5a5" radius={[4, 4, 0, 0]} barSize={40} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-      {/* Charts Section - 3 Abajo */}
-      <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0`}>
-        {/* Performance Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Desempeño por Materia</h3>
-            <div className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Horizontal</div>
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+              <div className="flex items-center gap-2 mb-4 flex-shrink-0">
+                <h3 className="text-lg font-bold text-foreground">Actividad Académica</h3>
+                <div className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">Interacción</div>
+              </div>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorInt" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#5048ff" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#5048ff" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" opacity={0.4} />
+                    <XAxis dataKey="day" stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+                    <Area type="monotone" dataKey="interaction" stroke="#5048ff" strokeWidth={3} fillOpacity={1} fill="url(#colorInt)" />
+                    <Area type="monotone" dataKey="assignments" stroke="#10b981" strokeWidth={3} fillOpacity={0} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
-            <BarChart data={performanceData} layout="vertical">
-              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" />
-              <XAxis type="number" stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <YAxis dataKey="name" type="category" stroke="#9ca3af" style={{fontSize: '11px'}} width={80} />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
-              <Bar dataKey="value" fill="#10b981" radius={[0, 8, 8, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
 
-        {/* Incidents Pie Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Tipos de Incidencias</h3>
-            <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Gráfico circular</div>
-          </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
-            <PieChart>
-              <Pie data={incidentsData} cx="50%" cy="50%" labelLine={true} outerRadius={70} fill="#8884d8" dataKey="value" label={({ name }) => name}>
-                {incidentsData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+          {/* Row 2 */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 pb-2">
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+              <h3 className="text-base font-bold text-foreground mb-4 flex-shrink-0">Desempeño</h3>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={performanceData}>
+                    <PolarGrid stroke="#e5e7eb" />
+                    <PolarAngleAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} />
+                    <Radar dataKey="value" stroke="#5048ff" strokeWidth={2} fill="#5048ff" fillOpacity={0.4} />
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-        {/* Calificaciones Chart */}
-        <div className="bg-gradient-to-br from-card to-card/80 rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col min-h-0">
-          <div className="flex items-center gap-2 mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Distribución de Calificaciones (0-20)</h3>
-            <div className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">Gráfico de barras</div>
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+              <h3 className="text-base font-bold text-foreground mb-4 flex-shrink-0">Incidencias</h3>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={incidentsData} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={5} dataKey="value">
+                      {incidentsData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+              <h3 className="text-base font-bold text-foreground mb-4 flex-shrink-0">Distribución</h3>
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={[
+                    { name: '16-20', value: 45 },
+                    { name: '14-15', value: 85 },
+                    { name: '12-13', value: 65 },
+                    { name: '10-11', value: 30 },
+                    { name: '0-9', value: 10 }
+                  ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" opacity={0.4} />
+                    <XAxis dataKey="name" stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                    <Bar dataKey="value" fill="#8b5cf6" radius={[6, 6, 0, 0]} barSize={35} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={showWelcome ? 220 : '100%'}>
-            <BarChart data={[
-              { name: '16-20', value: 45 },
-              { name: '14-15', value: 85 },
-              { name: '12-13', value: 65 },
-              { name: '10-11', value: 30 },
-              { name: '0-9', value: 10 }
-            ]}>
-              <CartesianGrid strokeDasharray="0" stroke="#e5e7eb" vertical={false} />
-              <XAxis dataKey="name" stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <YAxis stroke="#9ca3af" style={{fontSize: '12px'}} />
-              <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px' }} />
-              <Bar dataKey="value" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
         </div>
       </div>
     </div>

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Settings, Save, User, Building2, Bell, Palette, Clock } from 'lucide-react';
+import { Settings, Save, User, Building2, Bell, Palette, Clock, Shield } from 'lucide-react';
+import AccesoPage from '@/app/acceso/page';
 
 export default function ConfiguracionPage() {
   const [perfil, setPerfil] = useState({
@@ -54,15 +55,34 @@ export default function ConfiguracionPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const [activeTab, setActiveTab] = useState<'general' | 'acceso'>('general');
+
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
-      <div className="px-8 py-4 border-b border-border/40">
-        <h1 className="text-2xl font-bold text-foreground">Configuración</h1>
+    <div className="h-full flex flex-col bg-background">
+      {/* Header with Tabs */}
+      <div className="px-8 pt-6 flex gap-6 border-b border-border/40 bg-background">
+        <button
+          onClick={() => setActiveTab('general')}
+          className={`pb-3 font-medium transition-colors border-b-2 px-1 flex items-center gap-2 ${
+            activeTab === 'general' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Settings className="w-4 h-4" /> Configuración General
+        </button>
+        <button
+          onClick={() => setActiveTab('acceso')}
+          className={`pb-3 font-medium transition-colors border-b-2 px-1 flex items-center gap-2 ${
+            activeTab === 'acceso' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Shield className="w-4 h-4" /> Accesos y Roles
+        </button>
       </div>
 
-      {/* Content - 2 Column Layout */}
-      <div className="flex-1 overflow-hidden px-8 py-6">
+      <div className="flex-1 overflow-hidden relative">
+        <div className={`absolute inset-0 transition-opacity duration-300 flex flex-col ${activeTab === 'general' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+          {/* Content - 2 Column Layout */}
+          <div className="flex-1 overflow-hidden px-8 py-6">
         <div className="grid grid-cols-2 gap-6 h-full">
           {/* Column 1: Perfil Personal */}
           <div className="space-y-4 overflow-y-auto pr-2">
@@ -351,6 +371,12 @@ export default function ConfiguracionPage() {
             Guardar
           </button>
         </div>
+      </div>
+      </div>
+      
+      <div className={`absolute inset-0 transition-opacity duration-300 ${activeTab === 'acceso' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+        <AccesoPage />
+      </div>
       </div>
     </div>
   );
